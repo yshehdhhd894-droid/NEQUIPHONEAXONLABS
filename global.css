@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	html {
+		-webkit-tap-highlight-color: transparent;
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+		translate: no;
+	}
+
+	body {
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		-webkit-overflow-scrolling: touch;
+		overscroll-behavior: none;
+		background-color: #200020;
+		user-select: none;
+		-webkit-user-select: none;
+		translate: no;
+	}
+
+	input,
+	textarea,
+	[data-allow-select] {
+		user-select: text;
+		-webkit-user-select: text;
+	}
+
+	#root {
+		display: flex;
+		flex: 1;
+		min-height: 100dvh;
+		min-height: -webkit-fill-available;
+		width: 100%;
+		max-width: 480px;
+		margin-left: auto;
+		margin-right: auto;
+		translate: no;
+	}
+
+	html,
+	body {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+
+	::-webkit-scrollbar {
+		display: none;
+	}
+
+	* {
+		-webkit-touch-callout: none;
+	}
+
+	/* Sin outline de Chrome al tocar; NO quitar box-shadow de tarjetas */
+	* {
+		outline: none !important;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	input:focus,
+	input:focus-visible,
+	textarea:focus,
+	textarea:focus-visible,
+	select:focus,
+	select:focus-visible {
+		outline: none !important;
+		box-shadow: none !important;
+	}
+
+	input,
+	textarea {
+		font-family: ManropeMedium, Manrope, system-ui, sans-serif;
+		-webkit-appearance: none;
+		appearance: none;
+	}
+
+	button:focus,
+	button:focus-visible,
+	a:focus,
+	a:focus-visible,
+	[role="button"]:focus,
+	[role="button"]:focus-visible {
+		outline: none !important;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	button,
+	[role="button"],
+	[role="link"] {
+		cursor: pointer;
+		-webkit-user-select: none;
+		user-select: none;
+	}
+}

@@ -1,0 +1,23 @@
+/** Base local de nombres Nequi (premium). Se ampliará con la API del backend. */
+export const NEQUI_NAMES_SEED: Record<string, string> = {
+	"3001234567": "Juan Carlos Perez",
+	"3002345678": "Maria Fernanda Lopez",
+	"3003456789": "Carlos Andres Gomez",
+	"3004567890": "Ana Lucia Rodriguez",
+	"3005678901": "Diego Alejandro Ruiz",
+	"3006789012": "Laura Sofia Martinez",
+	"3007890123": "Andres Felipe Castro",
+	"3008901234": "Valentina Morales",
+	"3009012345": "Santiago Herrera",
+	"3010123456": "Camila Torres",
+	"3011234567": "Nicolas Jimenez",
+	"3012345678": "Isabella Vargas",
+	"3013456789": "Sebastian Rojas",
+	"3014567890": "Daniela Gutierrez",
+	"3015678901": "Mateo Suarez",
+	"3016789012": "Paula Mendoza",
+	"3017890123": "Felipe Ospina",
+	"3018901234": "Juliana Cardona",
+	"3019012345": "David Ramirez",
+	"3020123456": "Sara Quintero",
+};

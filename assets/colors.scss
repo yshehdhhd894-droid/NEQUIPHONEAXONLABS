@@ -1,0 +1,266 @@
+/** Nequi Colors **/
+:root {
+	/** Basics **/
+	--white: #fff;
+	--whitergb: 255, 255, 255;
+	--loading-white: rgba(255, 255, 255, 0.9);
+	--translucent-white: rgba(255, 255, 255, 0.5);
+	--translucent-white-rgb: 255, 255, 255, 0.5;
+	--black: #000;
+	--transparent: rgba(0, 0, 0, 0);
+	--transparent-rgb: 0, 0, 0, 0;
+	--white12: rgba(255, 255, 255, 0.12);
+	--white12-rgb: 255, 255, 255, 0.12;
+	--white-opacity-15: rgba(255, 255, 255, 0.15);
+	--black-opacity-24: rgba(0, 0, 0, 0.25);
+	--otp-key-background: #f5f6fa;
+
+	/** Greens **/
+	--text-in-form: #30b2bd;
+	--info-card-shadow: #80ebe3;
+	--progress-bar-light: #50e3c2;
+	--bubble-text-green: #46d993;
+	--pocket-green: #34c634;
+	--pocket-darkGreen: #16b580;
+	--guanabana-10: #ecfaf6;
+	--green-outline-checkmark: #11da7a;
+
+	/** Pinks **/
+	--guayaba: #ff2f73;
+	--guayabargb: 255, 47, 115;
+	--guayaba-90: rgba(255, 47, 115, 0.9);
+	--sangre: #f50057;
+	--chicle: #f8bbd0;
+	--pink-shadow: #ffc7d8;
+	--chicle-rgb: 248, 187, 208;
+	--error-input: #feede9;
+	--error-input-rgb: 254, 237, 233;
+	--zanahoria: #ff585f;
+	--zanahoria-rgb: 255, 88, 95;
+	--bubble-text-pink: #ff598f;
+	--bubble-text-pink-rgb: 255, 89, 143;
+	--pocket-skin: #f26d6d;
+	--pocket-pink: #bf2691;
+	--progress-bar-75: #d820a0;
+	--guayaba-10: #ffeaf1;
+	--card-pink: #e70f56;
+	--button-pink: #ffd5e3;
+	--reject-pink: #f4bdc7;
+
+	/** Purples **/
+	--medianoche: #210049;
+	--medianoche-rgb: 33, 0, 73;
+	--medianoche-90: rgba(33, 0, 73, 0.9);
+	--medianoche-80: rgba(33, 0, 73, 0.8);
+	--medianoche-81: rgba(33, 0, 73, 0.81);
+	--medianoche-16: rgba(33, 0, 73, 0.16);
+	--medianoche-25: rgba(33, 0, 73, 0.25);
+	--ultravioleta: #8400ff;
+	--ultravioletargb: 132, 0, 255;
+	--purple-action-sheet: #4c1fa4;
+	--progress-bar-progress: #9013fe;
+	--pocket-purple: #502aad;
+	--pocket-darkPurple: #35117c;
+	--progress-bar-50: #ad10d1;
+	--purple-box-shadow: 0px -2px 8px rgba(33, 0, 73, 0.25);
+	--tab-selected: #e9e6ed;
+	--chip-soursop: rgba(236, 231, 245, 1);
+
+	/** Grays **/
+	--gray-alert-message: var(--gray-500);
+	--gray-alert-button-group: #eaeaea;
+	--gray-inputs-divide: #e7e9ea;
+	--gray-inputs-divide-rgb: 231, 233, 234;
+	--nequi-box-shadow: rgba(60, 129, 133, 0.15);
+	--card-modal-text: #646464;
+	--gray-70: #6e6e6e;
+	--gray-70-rgb: 110, 110, 110;
+	--progress-bar-text: #dadada;
+	--pocket-card-subtitle: #605e5e;
+	--pocket-card-subtitle-rgb: rgba(96, 94, 94, 0.4);
+	--gray-card-bg-placeholder: #d8d8d8;
+	--background-field-gray: #f8f8fa;
+	--calendar-icon-placeholder: #979797;
+	--goal-card-ellipse: #e0e0e0;
+	--toggle-background: #d8d8d8;
+	--gray-placeholder: #4f4f4f;
+	--background-gray: #c4c4c4;
+	--gray-icon-color: #bdbdbd;
+	--gray-color-step-700: #b3b3b3;
+	--box-shadow-a-015: rgba(60, 129, 133, 0.15);
+	--border-radius-a-01: rgba(151, 151, 151, 0.1);
+	--white-smoke: #f5f5f5;
+	--gray-border: #eaeaea;
+
+	--gray-80: #4b4b4b;
+	--gray-10: var(--white-smoke);
+	--border-gray-20: rgba(151, 151, 151, 0.2);
+	--box-shadow-card-015: rgba(60, 133, 127, 0.15);
+	--gray-50: var(--gray-color-step-700);
+	--gray-50-rgb: rgba(179, 179, 179, 1);
+	--gray-40: #cacaca;
+
+	/** Blues **/
+	--aguamarica: #c8f7f3;
+	--aguamaricargb: 200, 247, 243;
+	--aguamarica-deep: #86e5d0;
+	--background-title-box: #eefcfb;
+	--background-title-box-rgb: 238, 252, 251;
+	--color-title-box: var(--orquidea);
+	--color-title-box-rgb: 47, 202, 215;
+
+	--pocket-blue: #2aa0d3;
+	--pocket-darkBlue: #16619e;
+	--background-field-aguamarica: #e7fbfa;
+	--blue-sum-button: #59d4de;
+	--aguamarica-light: #e9fbfa;
+	--aguamarica-border: #26bbbf;
+	--heaven-blue: #e2fafd;
+
+	/** Okidoki **/
+	--okidoki: var(--color-title-box);
+	--okidokirgb: 47, 202, 215;
+	--okidoki-40: #aceaef;
+	--background-okidoki: #22b4c0;
+
+	/** bilbao **/
+	--bilbao: #4376ff;
+	--bilbaorgb: 67, 118, 255;
+	--bilbao-40: #b4c8ff;
+	--bilbao-10: rgba(236, 241, 255, 1);
+	--bilbao-black: #6991ff;
+
+	/** Yellows **/
+	--pocket-yellow: #f9d641;
+	--pocket-orange: #f7a543;
+	--chip-yellow: #ffffbb;
+	--chip-yellow-text: #cda40b;
+
+	/** Reds **/
+	--error-message: #f03738;
+
+	/** Dark **/
+	--dark-text-color: #e8e7ea;
+	--dark-text-color-rgb: 232, 231, 234;
+	--dark-oscuro-60: #787280;
+	--dark-oscuro-20: #d2d0d5;
+	--dark-error-message: #ff9b9f;
+	--darkpurple: #140f38;
+	--darkpurplergb: 20, 15, 56;
+	--darkpurple-70: rgba(20, 15, 56, 0.7);
+	--dark-guayaba-85: rgba(97, 34, 56, 0.85);
+	--dark-zanahoria: #ff9b9f;
+	--dark-medianoche: #292037;
+	--dark-medianoche-rgb: 41, 32, 55;
+	--dark-text: #1e142c;
+	--dark-tex-rgb: 30, 20, 44;
+	--dark-background-color: #4b4356;
+	--dark-text-81: rgba(30, 20, 44, 0.81);
+	--dark-oscuro-70: #615a6b;
+	--dark-color-title-box: #82dfe7;
+	--dark-input-purple: #c7acf3;
+	--dark-oscuro-90: #342b41;
+	--dark-card-disabled-color: #a5a1ab;
+	--dark-text-90: rgba(30, 20, 44, 0.9);
+
+	/** New Brand **/
+
+	/** Uva **/
+	--uva: #200020;
+	--uva-rgb: rgb(32, 0, 32);
+	--uva-button-pressed: #130013;
+	--uva-80: #4d334d;
+	--uva-80-rgb: rgb(77, 51, 77);
+	--uva-60: #796679;
+	--uva-40: #a699a6;
+	--uva-20: #d2ccd2;
+	--uva-10: #e9e5e9;
+	--uva-10-rgb: rgb(233, 229, 233);
+	--shadow-uva-color: #2000202e;
+	--uva-modal-background: #200020e6;
+	--uva-disabled: #2b0d2b;
+
+	/** Orquídea **/
+	--orquidea: #da0081;
+	--orquidea-rgb: rgb(218, 0, 129);
+	--orquidea-button-pressed: #bc0b7d;
+	--orquidea-70: #e366a7;
+	--orquidea-50: #e992be;
+	--orquidea-30: #f1bfda;
+	--orquidea-10: #fbe5f2;
+	--orquidea-title-bot: #a9186e;
+	--orquidea-alert-background: #da0081d9;
+
+	/** Guanábana **/
+	--guanabana: #ece7f5;
+
+	/** Caribe **/
+	--caribe: #5a9efb;
+	--caribe-10: #eff6ff;
+	--caribe-20: #bdd8fd;
+	--caribe-30: #b0cdf8;
+	--caribe-60: #7bb1fc;
+	--caribe-80: #3e7ed7;
+	--caribe-95: #25569a;
+
+	/** Orange **/
+	--naranja: #dc410f;
+	--warning: #ef8708;
+	--warning-60: #f39d35;
+	--warning-30: #f6dab8;
+
+	/** Grey **/
+	--gray-800: #454545;
+	--gray-500: #646464;
+	--gray-400: #848484;
+	--gray-300: #c2c2c2;
+	--gray-200: #e8e8e8;
+	--gray-200-rgb: rgb(232, 232, 232);
+	--gray-100: #fafafa;
+
+	/** White **/
+	--white: #ffffff;
+	--white-rgb: 255, 255, 255;
+	--input-background: #fbf7fb;
+
+	/** Green **/
+	--positive: #11da7a;
+	--positive-10: #ccf5e2;
+	--positive-30: rgba(17, 218, 122, 0.3);
+	--positive-80: #0eb364;
+
+	--positive-20: rgba(20, 138, 81, 1);
+	--positive-10: #ccf5e2;
+	/** Blue **/
+	--alert-notification: #46d5e8;
+
+	/** Red **/
+	--error: #ff3e60;
+	--negative-80: #d93552;
+	--negative-90: #bc2741;
+
+	/** Black **/
+	--bottom-sheet-background: rgba(0, 0, 0, 0.5);
+
+	--input-purple: var(--orquidea);
+	--divisor-line: var(--guanabana);
+	--gray-text-color: var(--gray-500);
+	--gray-inputs-divide: #e7e9ea;
+	--search-background-color: #ece7f5;
+
+	/** Background Chat **/
+	--background-orquidea-gradient:
+		linear-gradient(0deg, #f8f1f5, #f8f1f5),
+		linear-gradient(
+			179.98deg,
+			rgba(255, 255, 255, 0.4) 11.82%,
+			rgba(248, 235, 242, 0.4) 111.86%
+		);
+	--snow: #f8f1f5;
+	--alert-spi-title: #ba7725;
+	--alert-spi-background: #f6dab8;
+	--alert-spi-background-60: rgba(246, 218, 184, 0.6);
+
+	--dark-turquoise: #097d8c;
+	--light-aqua: #e2fafd;
+}

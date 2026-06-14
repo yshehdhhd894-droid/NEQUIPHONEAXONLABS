@@ -44,7 +44,7 @@ export default function TabsLayout() {
 			/>
 
 			<View
-				className="flex-row absolute left-0 right-0 justify-between items-center"
+				className="flex-row absolute left-0 right-0 justify-between items-center bg-white"
 				style={{
 					bottom: 0,
 					paddingBottom: bottomInset,

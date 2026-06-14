@@ -155,7 +155,8 @@ export default function Home() {
 						left: 0,
 						right: 0,
 						zIndex: 2,
-						elevation: 4,
+						elevation: 0,
+						shadowOpacity: 0,
 					}}
 				>
 					<View
@@ -176,7 +177,8 @@ export default function Home() {
 						left: 0,
 						right: 0,
 						zIndex: 3,
-						elevation: 6,
+						elevation: 0,
+						shadowOpacity: 0,
 					}}
 				>
 					<View

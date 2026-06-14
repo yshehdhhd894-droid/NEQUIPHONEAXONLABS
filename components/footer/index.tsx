@@ -12,6 +12,7 @@ import {
 	MovementsTabSelected,
 } from "@/components/logos/tabs";
 import { useFooterLayoutMetrics } from "@/hooks/useFooterLayoutMetrics";
+import { footerTabShadow } from "@/libs/card-styles";
 import { cn } from "@/libs/utils";
 
 export function NavigationTabs() {
@@ -25,7 +26,7 @@ export function NavigationTabs() {
 
 	return (
 		<View
-			className="bg-[#f4f5f8] shadow-[0_0_5rem_0_#200020] flex-row"
+			className="bg-[#f4f5f8] flex-row"
 			style={{
 				flex: 1,
 				width: "100%",
@@ -33,6 +34,7 @@ export function NavigationTabs() {
 				borderRadius: footer.tabRadius,
 				padding: footer.tabInnerPadding,
 				gap: footer.gap,
+				...footerTabShadow,
 			}}
 		>
 			{tabItems.map((tab) => (

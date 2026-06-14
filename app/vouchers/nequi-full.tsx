@@ -32,6 +32,7 @@ import {
 	formatPhone,
 	formatTransactionReference,
 } from "@/libs/utils";
+import { useLayoutScale } from "@/libs/layout-scale";
 import { MUNDIAL_VOUCHER_PAINT_MS } from "@/libs/mundial-timing";
 import { walletService } from "@/services/api.service";
 import { useVictimsStore } from "@/store/useVictimsStore";
@@ -560,6 +561,28 @@ const TransactionDetails = ({
 	return null;
 };
 
+const MOVEMENT_PROBLEM_LABEL = "¿Algún problema con este movimiento?";
+
+function MovementProblemLink({ className }: { className?: string }) {
+	const { scale, width } = useLayoutScale();
+	const fontSize = scale(width < 340 ? 13 : width < 360 ? 14 : 16);
+
+	return (
+		<Link href="/home" className={className} style={{ width: "100%" }}>
+			<Text
+				fontWeight="medium"
+				className="text-orquidea text-center underline"
+				style={{ fontSize, width: "100%" }}
+				numberOfLines={1}
+				adjustsFontSizeToFit
+				minimumFontScale={0.72}
+			>
+				{MOVEMENT_PROBLEM_LABEL}
+			</Text>
+		</Link>
+	);
+}
+
 const ActionButtons = ({
 	transactionType,
 	style,
@@ -573,29 +596,15 @@ const ActionButtons = ({
 	if (!showActions) return null;
 
 	return (
-		<View className="pt-[1.9rem] px-[0.55rem]">
+		<View className="pt-[1.9rem]" style={{ paddingHorizontal: 8 }}>
 			{transactionType === "transfer.p2p" && style !== "2" && (
-				<Link href="/home" className="mt-2 mb-7">
-					<Text
-						fontWeight="medium"
-						className="text-orquidea text-center text-[16px] underline"
-					>
-						¿Algún problema con este movimiento?
-					</Text>
-				</Link>
+				<MovementProblemLink className="mt-2 mb-7" />
 			)}
 
 			{style === "1" ? (
 				<Button onPress={() => router.replace("/home")} title="Listo" />
 			) : (
-				<Link href="/home">
-					<Text
-						fontWeight="medium"
-						className="text-orquidea text-center text-[16px] underline"
-					>
-						¿Algún problema con este movimiento?
-					</Text>
-				</Link>
+				<MovementProblemLink />
 			)}
 		</View>
 	);

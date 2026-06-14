@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 
 export const PWA_INSTALLED_KEY = "nequi-installed";
+export const PWA_NOT_FOUND_PATH = "/404.html";
 
 export function isPwaStandalone(): boolean {
 	if (Platform.OS !== "web" || typeof window === "undefined") return true;
@@ -20,13 +21,19 @@ function isLocalDevHost(): boolean {
 	return host === "localhost" || host === "127.0.0.1";
 }
 
-/** Chrome/pestaña normal → bienvenida. Solo PWA instalada (standalone) entra a /app. */
+function isAppRoute(): boolean {
+	if (typeof window === "undefined") return false;
+	return window.location.pathname.startsWith("/app");
+}
+
+/** Chrome/Safari pestaña → 404 en cualquier ruta /app/*. Solo PWA instalada. */
 export function redirectIfBrowserNotInstalled(): void {
 	if (Platform.OS !== "web" || typeof window === "undefined") return;
 	if (typeof __DEV__ !== "undefined" && __DEV__) return;
 	if (isLocalDevHost()) return;
+	if (!isAppRoute()) return;
 	if (isPwaStandalone()) return;
-	window.location.replace("/");
+	window.location.replace(PWA_NOT_FOUND_PATH);
 }
 
 export function markAppBootReady(): void {

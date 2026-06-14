@@ -6,24 +6,10 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const dist = join(root, "dist");
 const publicDir = join(root, "public");
-const SW_VERSION = "nequi-v16";
+const SW_VERSION = "nequi-v17";
 
+const PWA_GATE_HEAD = `<script src="/pwa-gate.js"></script>`;
 const HARDENING_HEAD = `<script src="/hardening.js" defer></script>`;
-
-/** Bloquea /app en Chrome; solo modo standalone (PWA instalada). */
-const PWA_GATE_SCRIPT = `<script>
-(function () {
-	var h = location.hostname;
-	if (h === "localhost" || h === "127.0.0.1") return;
-	var standalone =
-		window.matchMedia("(display-mode: standalone)").matches ||
-		window.matchMedia("(display-mode: fullscreen)").matches ||
-		window.matchMedia("(display-mode: minimal-ui)").matches ||
-		window.matchMedia("(display-mode: window-controls-overlay)").matches ||
-		window.navigator.standalone === true;
-	if (!standalone) location.replace("/");
-})();
-</script>`;
 
 const APP_BOOT_SCRIPT = `<script>
 (function () {
@@ -41,19 +27,29 @@ const APP_BOOT_SCRIPT = `<script>
 })();
 </script>`;
 
+function injectSecurityScripts(htmlPath, withBoot = false) {
+	if (!existsSync(htmlPath)) return;
+	let html = readFileSync(htmlPath, "utf8");
+	html = html.replace(/<script src="\/pwa-gate\.js"><\/script>\s*/gi, "");
+	html = html.replace(/<script src="\/hardening\.js" defer><\/script>\s*/gi, "");
+	html = html.replace(
+		/<script>\s*\(function\s*\(\)\s*\{[\s\S]*?nequi-sw-version[\s\S]*?\}\)\(\);\s*<\/script>\s*/i,
+		"",
+	);
+	const prefix = PWA_GATE_HEAD + (withBoot ? APP_BOOT_SCRIPT : "") + HARDENING_HEAD;
+	html = html.replace("<head>", "<head>" + prefix);
+	writeFileSync(htmlPath, html);
+}
+
 function injectAppBootScript(appIndexPath) {
 	if (!existsSync(appIndexPath)) return;
 	let html = readFileSync(appIndexPath, "utf8");
-	html = html.replace(
-		/<script>\s*\(function\s*\(\)\s*\{[\s\S]*?nequi-sw-version[\s\S]*?\}\)\(\);\s*<\/script>/i,
-		"",
-	);
-	html = html.replace("<head>", "<head>" + PWA_GATE_SCRIPT + APP_BOOT_SCRIPT + HARDENING_HEAD);
 	html = html.replace(
 		/<script src="(\/app\/_expo\/static\/js\/web\/entry-[^"]+\.js)" defer><\/script>/,
 		'<script type="module" src="$1"></script>',
 	);
 	writeFileSync(appIndexPath, html);
+	injectSecurityScripts(appIndexPath, true);
 }
 
 const NO_TRANSLATE_HEAD = `<meta http-equiv="Content-Language" content="es-CO"/><meta name="google" content="notranslate"/><meta name="googlebot" content="notranslate"/>`;
@@ -68,14 +64,6 @@ function applyNoTranslateHtml(htmlPath) {
 
 	if (!html.includes('name="google" content="notranslate"')) {
 		html = html.replace("<head>", "<head>" + NO_TRANSLATE_HEAD);
-	}
-
-	if (!html.includes("display-mode: standalone")) {
-		html = html.replace("<head>", "<head>" + PWA_GATE_SCRIPT);
-	}
-
-	if (!html.includes("/hardening.js")) {
-		html = html.replace("<head>", "<head>" + HARDENING_HEAD);
 	}
 
 	writeFileSync(htmlPath, html);
@@ -97,6 +85,8 @@ function walkHtmlFiles(dir, files = []) {
 function injectNoTranslateIntoAppHtml(appDir) {
 	for (const htmlPath of walkHtmlFiles(appDir)) {
 		applyNoTranslateHtml(htmlPath);
+		const isAppEntry = htmlPath.endsWith(join("app", "index.html"));
+		injectSecurityScripts(htmlPath, isAppEntry);
 	}
 }
 
@@ -136,13 +126,14 @@ for (const file of [
 	"sw.js",
 	"serve.json",
 	"hardening.js",
+	"pwa-gate.js",
 	"404.html",
 	"_redirects",
 ]) {
 	cpSync(join(publicDir, file), join(dist, file));
 }
 
-for (const file of ["manifest.json", "sw.js", "hardening.js"]) {
+for (const file of ["manifest.json", "sw.js", "hardening.js", "pwa-gate.js"]) {
 	cpSync(join(publicDir, file), join(dist, "app", file));
 }
 
@@ -157,6 +148,7 @@ if (existsSync(join(publicDir, "fonts"))) {
 injectAppBootScript(join(dist, "app", "index.html"));
 injectNoTranslateIntoAppHtml(join(dist, "app"));
 applyNoTranslateHtml(join(dist, "index.html"));
+injectSecurityScripts(join(dist, "index.html"), false);
 
 console.log("✅ PWA lista en:", dist);
 console.log("   Bienvenida → /index.html");

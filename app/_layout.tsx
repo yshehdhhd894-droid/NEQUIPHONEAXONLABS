@@ -21,15 +21,16 @@ import {
 	APP_ALERT_TEXT,
 } from "@/libs/app-alert";
 import { setSystemNavBarDefault, UVA_COLOR } from "@/libs/navigation-bar";
-import {
-	markAppBootReady,
-	redirectIfBrowserNotInstalled,
-} from "@/libs/pwa-standalone";
+import { markAppBootReady, redirectIfBrowserNotInstalled } from "@/libs/pwa-standalone";
 import { disableBrowserAutoTranslate } from "@/libs/disable-browser-translate";
 import { initFrontendHardening } from "@/libs/frontend-hardening";
 import { useAppStore } from "@/store/useAppStore";
 
 import "../global.css";
+
+if (Platform.OS === "web" && typeof window !== "undefined") {
+	redirectIfBrowserNotInstalled();
+}
 
 if (Platform.OS !== "web") {
 	void SplashScreen.preventAutoHideAsync();

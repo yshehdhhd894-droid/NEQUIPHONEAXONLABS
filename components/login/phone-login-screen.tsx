@@ -35,6 +35,7 @@ import { useAuthStore } from "@/hooks/useAuth";
 import { useCreateUserFlow } from "@/hooks/useCreateUserFlow";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import { useLoginNavigationBar } from "@/hooks/useLoginNavigationBar";
+import { saveLastPhone } from "@/libs/last-phone-storage";
 import {
 	CONNECTION_ERROR_MESSAGE,
 	isConnectionError,
@@ -80,8 +81,6 @@ export function PhoneLoginScreen({ variant }: Props) {
 	}, []);
 
 	useEffect(() => {
-		if (!isReturning) return;
-
 		const task = InteractionManager.runAfterInteractions(() => {
 			void getLastPhone().then((phone) => {
 				if (phone) {
@@ -90,7 +89,7 @@ export function PhoneLoginScreen({ variant }: Props) {
 			});
 		});
 		return () => task.cancel();
-	}, [getLastPhone, isReturning]);
+	}, [getLastPhone]);
 
 	const handleLoginAccount = useCallback(async () => {
 		if (!isPhoneValid) {
@@ -109,6 +108,7 @@ export function PhoneLoginScreen({ variant }: Props) {
 				return;
 			}
 
+			await saveLastPhone(cleanPhone);
 			router.push(`/pin?phone=${cleanPhone}`);
 		} catch (error) {
 			const message =

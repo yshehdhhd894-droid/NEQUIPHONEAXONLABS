@@ -1,5 +1,5 @@
 import { Redirect } from "expo-router";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { LoginCheckPaymentCoachmark } from "@/components/login/login-check-payment-coachmark";
 import { LoginCoachmarkPreloader } from "@/components/login/login-coachmark-preloader";
@@ -12,6 +12,9 @@ import { setSystemNavBarLogin } from "@/libs/navigation-bar";
 import { useAppStore } from "@/store/useAppStore";
 
 export default function WelcomeLoginScreen() {
+	const [storeReady, setStoreReady] = useState(
+		() => useAppStore.persist.hasHydrated(),
+	);
 	const enrollTourCompleted = useAppStore((s) => s.enrollTourCompleted);
 	const hasEverLoggedIn = useAppStore((s) => s.hasEverLoggedIn);
 	const pendingLoginCoachmark = useAppStore(
@@ -22,6 +25,16 @@ export default function WelcomeLoginScreen() {
 	);
 
 	useLoginNavigationBar();
+
+	useEffect(() => {
+		if (useAppStore.persist.hasHydrated()) {
+			setStoreReady(true);
+			return;
+		}
+		return useAppStore.persist.onFinishHydration(() => {
+			setStoreReady(true);
+		});
+	}, []);
 
 	useEffect(() => {
 		if (enrollTourCompleted) {
@@ -41,6 +54,10 @@ export default function WelcomeLoginScreen() {
 	const handleCoachmarkClose = useCallback(() => {
 		dismissLoginCheckPaymentCoachmark();
 	}, [dismissLoginCheckPaymentCoachmark]);
+
+	if (!storeReady) {
+		return <View style={styles.content} />;
+	}
 
 	if (!enrollTourCompleted) {
 		return <Redirect href="/enroll-tour" />;

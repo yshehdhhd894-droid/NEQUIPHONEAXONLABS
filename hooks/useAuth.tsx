@@ -1,7 +1,10 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { queryClient, type User } from "@/libs/api";
 import { canUseVipNameLookup } from "@/libs/premium";
+import {
+	getLastPhone as readLastPhone,
+	saveLastPhone,
+} from "@/libs/last-phone-storage";
 import { usePremiumStore } from "@/store/usePremiumStore";
 import { userService } from "@/services/api.service";
 
@@ -19,7 +22,6 @@ try {
 	SecureStore = require("@/libs/web-secure-store");
 }
 
-const LAST_PHONE_KEY = "@last_phone";
 const SECURE_PHONE_KEY = "secure_phone";
 const SECURE_PIN_KEY = "secure_pin";
 
@@ -86,7 +88,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 				await Promise.all([
 					SecureStore.setItemAsync(SECURE_PHONE_KEY, cleanPhone),
 					SecureStore.setItemAsync(SECURE_PIN_KEY, pin),
-					AsyncStorage.setItem(LAST_PHONE_KEY, cleanPhone),
+					saveLastPhone(cleanPhone),
 				]);
 			} catch (storageError) {
 				console.warn("No se pudieron guardar credenciales locales:", storageError);
@@ -157,7 +159,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 	// Obtener último teléfono usado
 	getLastPhone: async (): Promise<string | null> => {
 		try {
-			return await AsyncStorage.getItem(LAST_PHONE_KEY);
+			return await readLastPhone();
 		} catch (error) {
 			console.error("Error getting last phone:", error);
 			return null;

@@ -4,7 +4,7 @@
 	"description": "Nequi Colombia para iPhone — AxonLabsOrg",
 	"id": "nequi-colombia-axonlabs-v2",
 	"start_url": "/app/",
-	"scope": "/app/",
+	"scope": "/",
 	"display": "standalone",
 	"display_override": ["standalone", "minimal-ui"],
 	"orientation": "portrait",

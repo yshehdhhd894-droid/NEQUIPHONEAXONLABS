@@ -13,7 +13,7 @@
 	<meta name="googlebot" content="notranslate" />
 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 	<title>Nequi Colombia — AxonLabsOrg</title>
-	<link rel="manifest" href="/manifest.json?v=18" />
+	<link rel="manifest" href="/manifest.json?v=19" />
 	<link rel="icon" href="/icons/icon-192.png" />
 	<link rel="apple-touch-icon" href="/icons/icon-192.png" />
 	<script src="/pwa-access.js"></script>
@@ -478,7 +478,7 @@
 	</div>
 
 	<script>
-		const INSTALLED_KEY = "nequi-installed";
+		const INSTALLED_KEY = "nequi-installed-v2";
 		const btnMain = document.getElementById("btn-main");
 		const btnIosHint = document.getElementById("btn-ios-hint");
 		const iosHint = document.getElementById("ios-hint");
@@ -565,7 +565,6 @@
 		}
 
 		function captureInstallPrompt(event) {
-			if (isMarkedInstalled()) return;
 			event.preventDefault();
 			deferredPrompt = event;
 			while (installWaiters.length) {
@@ -576,7 +575,7 @@
 		async function ensureServiceWorker() {
 			if (!("serviceWorker" in navigator)) return false;
 			try {
-				await navigator.serviceWorker.register("/sw.js", { scope: "/app/" });
+				await navigator.serviceWorker.register("/sw.js", { scope: "/" });
 				await navigator.serviceWorker.ready;
 				return true;
 			} catch {
@@ -585,7 +584,7 @@
 		}
 
 		async function triggerNativeInstall() {
-			if (installing || isMarkedInstalled()) return;
+			if (installing) return;
 			installing = true;
 
 			const originalText = btnMain.textContent;
@@ -595,13 +594,12 @@
 
 			await ensureServiceWorker();
 
-			let prompt = deferredPrompt || (await waitForInstallPrompt());
-
-			btnMain.disabled = false;
-			btnMain.textContent = originalText;
-			installing = false;
+			let prompt = deferredPrompt || (await waitForInstallPrompt(5000));
 
 			if (!prompt) {
+				btnMain.disabled = false;
+				btnMain.textContent = originalText;
+				installing = false;
 				showInstallInstructions();
 				return;
 			}
@@ -613,11 +611,14 @@
 
 				if (choice.outcome === "accepted") {
 					markInstalled();
-					showInstalledUI();
 				}
 			} catch {
 				showInstallInstructions();
 			}
+
+			btnMain.disabled = false;
+			btnMain.textContent = originalText;
+			installing = false;
 		}
 
 		function onMainClick() {
@@ -626,7 +627,11 @@
 				return;
 			}
 
-			if (isMarkedInstalled()) return;
+			if (isMarkedInstalled()) {
+				showInstalledUI();
+				installedGuide.scrollIntoView({ behavior: "smooth", block: "nearest" });
+				return;
+			}
 
 			if (isIOS) {
 				iosHint.classList.add("visible");

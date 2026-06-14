@@ -12,6 +12,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { setSystemNavBarDefault, UVA_COLOR } from "@/libs/navigation-bar";
+import { setPwaThemeColor } from "@/libs/pwa-theme-color";
 import { SPLASH_LOTTIE_SOURCE } from "@/libs/splash-lottie-ready";
 
 const LOTTIE_WHITE = "#FFFFFF";
@@ -153,6 +154,7 @@ function NativeAppSplash({ onFinish }: AppSplashProps) {
 
 	useEffect(() => {
 		void NavigationBar.setButtonStyleAsync("light");
+		setPwaThemeColor(UVA_COLOR);
 	}, []);
 
 	const hideNativeSplash = useCallback(() => {
@@ -165,6 +167,7 @@ function NativeAppSplash({ onFinish }: AppSplashProps) {
 		if (finishedRef.current) return;
 		finishedRef.current = true;
 		void setSystemNavBarDefault();
+		setPwaThemeColor(UVA_COLOR);
 		onFinish();
 	}, [onFinish]);
 
@@ -173,6 +176,7 @@ function NativeAppSplash({ onFinish }: AppSplashProps) {
 		playbackStartedRef.current = true;
 		setLottiePlaying(true);
 		setLottieVisible(true);
+		setPwaThemeColor(LOTTIE_WHITE);
 		hideNativeSplash();
 		void NavigationBar.setButtonStyleAsync("light");
 		lottieRef.current?.play();
@@ -209,7 +213,25 @@ function NativeAppSplash({ onFinish }: AppSplashProps) {
 
 	return (
 		<View style={[styles.root, { backgroundColor: UVA_COLOR }]}>
-			<StatusBar style={lottiePlaying ? "dark" : "light"} />
+			<StatusBar
+				style={lottiePlaying ? "dark" : "light"}
+				backgroundColor={lottiePlaying ? LOTTIE_WHITE : UVA_COLOR}
+			/>
+
+			{insets.top > 0 ? (
+				<View
+					pointerEvents="none"
+					style={[
+						styles.systemNavStrip,
+						{
+							top: 0,
+							bottom: undefined,
+							height: insets.top,
+							backgroundColor: lottiePlaying ? LOTTIE_WHITE : UVA_COLOR,
+						},
+					]}
+				/>
+			) : null}
 
 			{lottiePlaying ? (
 				<View
@@ -252,20 +274,95 @@ function NativeAppSplash({ onFinish }: AppSplashProps) {
 	);
 }
 
+function WebAppSplash({ onFinish }: AppSplashProps) {
+	const insets = useSafeAreaInsets();
+	const [lottiePlaying, setLottiePlaying] = useState(false);
+	const playbackStartedRef = useRef(false);
+	const playbackScheduledRef = useRef(false);
+
+	useEffect(() => {
+		setPwaThemeColor(UVA_COLOR);
+	}, []);
+
+	const startPlayback = useCallback(() => {
+		if (playbackStartedRef.current) return;
+		playbackStartedRef.current = true;
+		setLottiePlaying(true);
+		setPwaThemeColor(LOTTIE_WHITE);
+	}, []);
+
+	const schedulePlayback = useCallback(() => {
+		if (playbackStartedRef.current || playbackScheduledRef.current) return;
+		playbackScheduledRef.current = true;
+		setTimeout(startPlayback, PURPLE_HOLD_MS);
+	}, [startPlayback]);
+
+	useEffect(() => {
+		schedulePlayback();
+		const fallback = setTimeout(startPlayback, 1000 + PURPLE_HOLD_MS);
+		return () => clearTimeout(fallback);
+	}, [schedulePlayback, startPlayback]);
+
+	const chromeColor = lottiePlaying ? LOTTIE_WHITE : UVA_COLOR;
+	const bottomStripColor = lottiePlaying ? LOTTIE_NAV_BLACK : UVA_COLOR;
+
+	return (
+		<View style={[styles.root, { backgroundColor: chromeColor }]}>
+			<StatusBar
+				style={lottiePlaying ? "dark" : "light"}
+				backgroundColor={chromeColor}
+			/>
+
+			{insets.top > 0 ? (
+				<View
+					pointerEvents="none"
+					style={[
+						styles.systemNavStrip,
+						{
+							top: 0,
+							bottom: undefined,
+							height: insets.top,
+							backgroundColor: chromeColor,
+						},
+					]}
+				/>
+			) : null}
+
+			{lottiePlaying ? (
+				<>
+					<View
+						pointerEvents="none"
+						style={[styles.lottieBackdrop, { backgroundColor: LOTTIE_WHITE }]}
+					/>
+					<View style={styles.lottieStage}>
+						<WebSplash onFinish={onFinish} />
+					</View>
+				</>
+			) : null}
+
+			{insets.bottom > 0 ? (
+				<View
+					pointerEvents="none"
+					style={[
+						styles.systemNavStrip,
+						{
+							height: insets.bottom,
+							backgroundColor: bottomStripColor,
+						},
+					]}
+				/>
+			) : null}
+		</View>
+	);
+}
+
 function AppSplashComponent({ onFinish }: AppSplashProps) {
 	useEffect(() => {
 		void SplashScreen.hideAsync();
 	}, []);
 
 	if (Platform.OS === "web") {
-		return (
-			<View style={[styles.root, { backgroundColor: LOTTIE_WHITE }]}>
-				<StatusBar style="dark" backgroundColor={LOTTIE_WHITE} />
-				<View style={styles.lottieStage}>
-					<WebSplash onFinish={onFinish} />
-				</View>
-			</View>
-		);
+		return <WebAppSplash onFinish={onFinish} />;
 	}
 
 	return <NativeAppSplash onFinish={onFinish} />;

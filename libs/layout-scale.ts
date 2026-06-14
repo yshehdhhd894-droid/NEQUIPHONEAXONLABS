@@ -10,6 +10,12 @@ const BASE_HEIGHT = 844;
 /** Teléfonos grandes (Pro Max) sin techo artificial. */
 const MAX_PHONE_WIDTH = 480;
 
+/** Límites de escala para pantallas muy pequeñas o muy grandes. */
+const MIN_WIDTH_SCALE = 0.76;
+const MAX_WIDTH_SCALE = 1.12;
+const MIN_HEIGHT_SCALE = 0.78;
+const MAX_HEIGHT_SCALE = 1.08;
+
 /** Evita que display size 500–700 rompa el layout. */
 export const MAX_FONT_SCALE_MULTIPLIER = 1.15;
 
@@ -21,8 +27,14 @@ export function useLayoutScale() {
 		Platform.OS === "web" ? Math.min(width, MAX_PHONE_WIDTH) : width;
 	const layoutHeight = height;
 
-	const widthScale = Math.max(layoutWidth / BASE_WIDTH, 0.82);
-	const heightScale = Math.max(layoutHeight / BASE_HEIGHT, 0.85);
+	const widthScale = Math.min(
+		Math.max(layoutWidth / BASE_WIDTH, MIN_WIDTH_SCALE),
+		MAX_WIDTH_SCALE,
+	);
+	const heightScale = Math.min(
+		Math.max(layoutHeight / BASE_HEIGHT, MIN_HEIGHT_SCALE),
+		MAX_HEIGHT_SCALE,
+	);
 	const cappedFont = Math.min(
 		Math.max(fontScale, 1),
 		MAX_FONT_SCALE_MULTIPLIER,

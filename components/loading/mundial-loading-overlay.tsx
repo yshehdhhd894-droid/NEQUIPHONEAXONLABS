@@ -7,6 +7,7 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { LOADING_MUNDIAL_HTML } from "@/libs/loading-mundial-html";
+import { setPwaThemeColor } from "@/libs/pwa-theme-color";
 import { MUNDIAL_RESTART_ANIMATIONS_JS } from "@/libs/mundial-webview-scripts";
 import { MundialWebView } from "./mundial-webview";
 
@@ -25,6 +26,7 @@ export function MundialLoadingOverlay({ isHiding, onFinish }: Props) {
 	const opacity = useSharedValue(0);
 
 	useEffect(() => {
+		setPwaThemeColor("#FFFFFF");
 		opacity.value = withTiming(1, {
 			duration: FADE_IN_MS,
 			easing: Easing.out(Easing.ease),

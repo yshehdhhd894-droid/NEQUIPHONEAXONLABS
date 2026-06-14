@@ -140,11 +140,10 @@ export default function RootLayout() {
 	}, []);
 
 	const handleSplashDone = useCallback(() => {
-		if (!fontsReady) return;
 		void setSystemNavBarDefault();
 		markAppBootReady();
 		setPhase("app");
-	}, [fontsReady]);
+	}, []);
 
 	if (phase === "splash") {
 		return (

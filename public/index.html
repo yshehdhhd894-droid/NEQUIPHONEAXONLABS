@@ -19,6 +19,17 @@
 	<script src="/pwa-access.js"></script>
 	<script>
 		(function () {
+			var host = location.hostname;
+			if (
+				(host === "localhost" || host === "127.0.0.1") &&
+				(location.pathname === "/" || location.pathname === "")
+			) {
+				var params = new URLSearchParams(location.search);
+				if (params.get("welcome") !== "1") {
+					location.replace("/app/");
+					return;
+				}
+			}
 			if (window.__nequiIsStandalonePwa && window.__nequiIsStandalonePwa()) {
 				window.location.replace("/app/");
 			}

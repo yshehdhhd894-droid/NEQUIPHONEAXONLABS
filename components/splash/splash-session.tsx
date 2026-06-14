@@ -15,12 +15,12 @@ export function SplashSession({ onReady, fontsReady }: Props) {
 	onReadyRef.current = onReady;
 
 	const tryAdvance = useCallback(() => {
-		if (notifiedRef.current || !lottieDoneRef.current || !fontsReady) {
+		if (notifiedRef.current || !lottieDoneRef.current) {
 			return;
 		}
 		notifiedRef.current = true;
 		onReadyRef.current();
-	}, [fontsReady]);
+	}, []);
 
 	const handleLottieFinish = useCallback(() => {
 		lottieDoneRef.current = true;
@@ -29,7 +29,7 @@ export function SplashSession({ onReady, fontsReady }: Props) {
 
 	useEffect(() => {
 		tryAdvance();
-	}, [fontsReady, tryAdvance]);
+	}, [tryAdvance]);
 
 	return (
 		<>

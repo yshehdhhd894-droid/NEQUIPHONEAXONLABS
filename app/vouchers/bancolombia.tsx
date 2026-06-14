@@ -154,8 +154,11 @@ export default function BancolombiaVoucher() {
 								</View>
 
 								<View className="flex-row gap-1 items-center justify-center pb-2">
-								<View className="bg-[#11da7a] rounded-[4px]">
-									<Ionicons name="checkmark-outline" size={17} color="black" />
+								<View
+									className="bg-[#11da7a] rounded-[3px] items-center justify-center"
+									style={{ width: 17, height: 17 }}
+								>
+									<Ionicons name="checkmark-outline" size={14} color="black" />
 								</View>
 								<Text style={{ fontSize: 17 }} className="text-uva">
 									¡Pago exitoso!

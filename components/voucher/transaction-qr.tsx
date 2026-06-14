@@ -10,10 +10,10 @@ import { voucherQrValue } from "@/libs/base64";
 /** QR + marco menta + halo verde suave (como detalle del movimiento oficial). */
 const QR_SIZE = 116;
 const QR_PADDING = 5;
-const QR_BORDER_WIDTH = 2;
+const QR_BORDER_WIDTH = 1;
 const QR_BORDER_COLOR = "#9EDFC4";
-const QR_GREEN_HALO = 5;
-const QR_GREEN_BASE = "rgba(17, 218, 122, 0.28)";
+const QR_GREEN_HALO = 2;
+const QR_GREEN_BASE = "rgba(17, 218, 122, 0.22)";
 const QR_FRAME_SIZE = QR_SIZE + QR_PADDING * 2 + QR_BORDER_WIDTH * 2;
 const QR_OUTER_SIZE = QR_FRAME_SIZE + QR_GREEN_HALO * 2;
 const QR_LOGO_CIRCLE_SIZE = 28;

@@ -31,9 +31,14 @@ export default function WelcomeLoginScreen() {
 			setStoreReady(true);
 			return;
 		}
-		return useAppStore.persist.onFinishHydration(() => {
+		const unsub = useAppStore.persist.onFinishHydration(() => {
 			setStoreReady(true);
 		});
+		const fallback = setTimeout(() => setStoreReady(true), 2000);
+		return () => {
+			unsub?.();
+			clearTimeout(fallback);
+		};
 	}, []);
 
 	useEffect(() => {

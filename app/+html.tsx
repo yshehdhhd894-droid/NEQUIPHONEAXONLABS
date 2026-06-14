@@ -11,11 +11,6 @@ export default function Root({ children }: { children: React.ReactNode }) {
 					name="viewport"
 					content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
 				/>
-				<meta name="theme-color" content="#200020" />
-				<meta
-					name="apple-mobile-web-app-status-bar-style"
-					content="black-translucent"
-				/>
 				<meta httpEquiv="Content-Language" content="es-CO" />
 				<meta name="google" content="notranslate" />
 				<meta name="googlebot" content="notranslate" />

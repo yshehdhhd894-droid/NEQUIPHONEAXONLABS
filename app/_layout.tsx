@@ -22,7 +22,6 @@ import {
 } from "@/libs/app-alert";
 import { setSystemNavBarDefault, UVA_COLOR } from "@/libs/navigation-bar";
 import { markAppBootReady, redirectIfBrowserNotInstalled } from "@/libs/pwa-standalone";
-import { usePwaThemeColor } from "@/libs/pwa-theme-color";
 import { disableBrowserAutoTranslate } from "@/libs/disable-browser-translate";
 import { initFrontendHardening } from "@/libs/frontend-hardening";
 import { useAppStore } from "@/store/useAppStore";
@@ -150,7 +149,6 @@ export default function RootLayout() {
 	if (phase === "splash") {
 		return (
 			<SafeAreaProvider>
-				<SplashThemeSync />
 				<StatusBar style="light" backgroundColor={UVA_COLOR} />
 				<View style={{ flex: 1, backgroundColor: UVA_COLOR }}>
 					<SplashSession onReady={handleSplashDone} fontsReady={fontsReady} />
@@ -162,7 +160,6 @@ export default function RootLayout() {
 	if (!enrollTourCompleted) {
 		return (
 			<SafeAreaProvider>
-				<EnrollThemeSync />
 				<StatusBar style="dark" backgroundColor="#FFFFFF" />
 				<View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
 					<GestureHandlerRootView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
@@ -177,7 +174,6 @@ export default function RootLayout() {
 
 	return (
 		<SafeAreaProvider>
-			<AppThemeSync />
 			<StatusBar style="light" backgroundColor={UVA_COLOR} />
 			<View style={{ flex: 1, backgroundColor: UVA_COLOR }}>
 				<GestureHandlerRootView style={{ flex: 1, backgroundColor: UVA_COLOR }}>
@@ -188,19 +184,4 @@ export default function RootLayout() {
 			</View>
 		</SafeAreaProvider>
 	);
-}
-
-function SplashThemeSync() {
-	usePwaThemeColor(UVA_COLOR);
-	return null;
-}
-
-function EnrollThemeSync() {
-	usePwaThemeColor("#FFFFFF");
-	return null;
-}
-
-function AppThemeSync() {
-	usePwaThemeColor(UVA_COLOR);
-	return null;
 }

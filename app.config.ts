@@ -19,7 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		backgroundColor: "#200020",
 		display: "standalone",
 		orientation: "portrait",
-		scope: "/",
+		scope: "/app/",
 		startUrl: "/app/",
 		lang: "es-CO",
 		preferRelatedApplications: false,

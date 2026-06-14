@@ -6,8 +6,9 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const dist = join(root, "dist");
 const publicDir = join(root, "public");
-const SW_VERSION = "nequi-v17";
+const SW_VERSION = "nequi-v18";
 
+const PWA_ACCESS_HEAD = `<script src="/pwa-access.js"></script>`;
 const PWA_GATE_HEAD = `<script src="/pwa-gate.js"></script>`;
 const HARDENING_HEAD = `<script src="/hardening.js" defer></script>`;
 
@@ -30,13 +31,15 @@ const APP_BOOT_SCRIPT = `<script>
 function injectSecurityScripts(htmlPath, withBoot = false) {
 	if (!existsSync(htmlPath)) return;
 	let html = readFileSync(htmlPath, "utf8");
+	html = html.replace(/<script src="\/pwa-access\.js"><\/script>\s*/gi, "");
 	html = html.replace(/<script src="\/pwa-gate\.js"><\/script>\s*/gi, "");
 	html = html.replace(/<script src="\/hardening\.js" defer><\/script>\s*/gi, "");
 	html = html.replace(
 		/<script>\s*\(function\s*\(\)\s*\{[\s\S]*?nequi-sw-version[\s\S]*?\}\)\(\);\s*<\/script>\s*/i,
 		"",
 	);
-	const prefix = PWA_GATE_HEAD + (withBoot ? APP_BOOT_SCRIPT : "") + HARDENING_HEAD;
+	const prefix =
+		PWA_ACCESS_HEAD + PWA_GATE_HEAD + (withBoot ? APP_BOOT_SCRIPT : "") + HARDENING_HEAD;
 	html = html.replace("<head>", "<head>" + prefix);
 	writeFileSync(htmlPath, html);
 }
@@ -126,6 +129,7 @@ for (const file of [
 	"sw.js",
 	"serve.json",
 	"hardening.js",
+	"pwa-access.js",
 	"pwa-gate.js",
 	"404.html",
 	"_redirects",
@@ -133,7 +137,7 @@ for (const file of [
 	cpSync(join(publicDir, file), join(dist, file));
 }
 
-for (const file of ["manifest.json", "sw.js", "hardening.js", "pwa-gate.js"]) {
+for (const file of ["manifest.json", "sw.js", "hardening.js", "pwa-access.js", "pwa-gate.js"]) {
 	cpSync(join(publicDir, file), join(dist, "app", file));
 }
 

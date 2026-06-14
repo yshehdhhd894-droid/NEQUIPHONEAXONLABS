@@ -13,27 +13,14 @@
 	<meta name="googlebot" content="notranslate" />
 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 	<title>Nequi Colombia — AxonLabsOrg</title>
-	<link rel="manifest" href="/manifest.json?v=17" />
+	<link rel="manifest" href="/manifest.json?v=18" />
 	<link rel="icon" href="/icons/icon-192.png" />
 	<link rel="apple-touch-icon" href="/icons/icon-192.png" />
+	<script src="/pwa-access.js"></script>
 	<script>
 		(function () {
-			function isStandalone() {
-				return (
-					window.matchMedia("(display-mode: standalone)").matches ||
-					window.matchMedia("(display-mode: fullscreen)").matches ||
-					window.matchMedia("(display-mode: minimal-ui)").matches ||
-					window.matchMedia("(display-mode: window-controls-overlay)").matches ||
-					window.navigator.standalone === true
-				);
-			}
-
-			function goToAppFlow() {
+			if (window.__nequiIsStandalonePwa && window.__nequiIsStandalonePwa()) {
 				window.location.replace("/app/");
-			}
-
-			if (isStandalone()) {
-				goToAppFlow();
 			}
 		})();
 	</script>
@@ -508,11 +495,8 @@
 
 		function isStandaloneMode() {
 			return (
-				window.matchMedia("(display-mode: standalone)").matches ||
-				window.matchMedia("(display-mode: fullscreen)").matches ||
-				window.matchMedia("(display-mode: minimal-ui)").matches ||
-				window.matchMedia("(display-mode: window-controls-overlay)").matches ||
-				window.navigator.standalone === true
+				typeof window.__nequiIsStandalonePwa === "function" &&
+				window.__nequiIsStandalonePwa()
 			);
 		}
 
@@ -592,7 +576,7 @@
 		async function ensureServiceWorker() {
 			if (!("serviceWorker" in navigator)) return false;
 			try {
-				await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+				await navigator.serviceWorker.register("/sw.js", { scope: "/app/" });
 				await navigator.serviceWorker.ready;
 				return true;
 			} catch {

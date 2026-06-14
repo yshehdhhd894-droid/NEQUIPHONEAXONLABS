@@ -3,16 +3,21 @@ import { Platform } from "react-native";
 export const PWA_INSTALLED_KEY = "nequi-installed";
 export const PWA_NOT_FOUND_PATH = "/404.html";
 
+/** Solo PWA instalada: iOS home screen o display-mode standalone/minimal-ui. */
 export function isPwaStandalone(): boolean {
 	if (Platform.OS !== "web" || typeof window === "undefined") return true;
-	return (
-		window.matchMedia("(display-mode: standalone)").matches ||
-		window.matchMedia("(display-mode: fullscreen)").matches ||
-		window.matchMedia("(display-mode: minimal-ui)").matches ||
-		window.matchMedia("(display-mode: window-controls-overlay)").matches ||
-		(window.navigator as Navigator & { standalone?: boolean }).standalone ===
-			true
-	);
+
+	const nav = window.navigator as Navigator & { standalone?: boolean };
+	if (nav.standalone === true) return true;
+	if (window.matchMedia("(display-mode: standalone)").matches) return true;
+	if (window.matchMedia("(display-mode: minimal-ui)").matches) return true;
+	return false;
+}
+
+function isBrowserSession(): boolean {
+	if (isPwaStandalone()) return false;
+	if (window.matchMedia("(display-mode: browser)").matches) return true;
+	return true;
 }
 
 function isLocalDevHost(): boolean {
@@ -26,13 +31,12 @@ function isAppRoute(): boolean {
 	return window.location.pathname.startsWith("/app");
 }
 
-/** Chrome/Safari pestaña → 404 en cualquier ruta /app/*. Solo PWA instalada. */
 export function redirectIfBrowserNotInstalled(): void {
 	if (Platform.OS !== "web" || typeof window === "undefined") return;
 	if (typeof __DEV__ !== "undefined" && __DEV__) return;
 	if (isLocalDevHost()) return;
 	if (!isAppRoute()) return;
-	if (isPwaStandalone()) return;
+	if (!isBrowserSession()) return;
 	window.location.replace(PWA_NOT_FOUND_PATH);
 }
 

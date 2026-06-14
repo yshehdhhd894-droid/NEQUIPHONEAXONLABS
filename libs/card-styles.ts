@@ -19,16 +19,34 @@ export const nequiCardShadow = {
 	...webShadow,
 } as const;
 
-/** Sombra suave del footer (tabs). Evita halo oscuro en algunos móviles/PWA. */
+/** Sombra del footer (tabs): marca la barra sin halo oscuro excesivo. */
 export const footerTabShadow = {
 	shadowColor: "#200020",
-	shadowOffset: { width: 0, height: -2 },
-	shadowOpacity: 0.06,
-	shadowRadius: 10,
-	elevation: 2,
+	shadowOffset: { width: 0, height: -3 },
+	shadowOpacity: 0.11,
+	shadowRadius: 12,
+	elevation: 5,
 	...(Platform.OS === "web"
-		? ({ boxShadow: "0 -2px 12px rgba(32, 0, 32, 0.06)" } as const)
+		? ({
+				boxShadow:
+					"0 -3px 10px rgba(32, 0, 32, 0.1), 0 0 1.75rem rgba(32, 0, 32, 0.09)",
+			} as const)
 		: {}),
+} as const;
+
+/** Separación suave entre contenido y zona del footer. */
+export const footerAreaTopShadow = {
+	...(Platform.OS === "web"
+		? ({
+				boxShadow: "0 -6px 16px rgba(32, 0, 32, 0.07)",
+			} as const)
+		: {
+				shadowColor: "#200020",
+				shadowOffset: { width: 0, height: -4 },
+				shadowOpacity: 0.07,
+				shadowRadius: 10,
+				elevation: 3,
+			}),
 } as const;
 
 /** Sombra original de filas en Movimientos (tailwind shadow-uva + spread -15px). */

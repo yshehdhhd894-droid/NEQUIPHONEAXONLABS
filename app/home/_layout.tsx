@@ -8,6 +8,7 @@ import { ActionModal } from "@/components/footer/action-modal";
 import { FloatingActionButton } from "@/components/footer/floating-buttons";
 import { useBottomInset } from "@/hooks/useBottomInset";
 import { useFooterLayoutMetrics } from "@/hooks/useFooterLayoutMetrics";
+import { footerAreaTopShadow } from "@/libs/card-styles";
 import { useModal } from "@/hooks/useModal";
 
 export default function TabsLayout() {
@@ -44,7 +45,7 @@ export default function TabsLayout() {
 			/>
 
 			<View
-				className="flex-row absolute left-0 right-0 justify-between items-center bg-white"
+				className="flex-row absolute left-0 right-0 justify-between items-center bg-[#f4f5f8]"
 				style={{
 					bottom: 0,
 					paddingBottom: bottomInset,
@@ -52,6 +53,7 @@ export default function TabsLayout() {
 					paddingHorizontal: footer.horizontalPadding,
 					gap: footer.gap,
 					zIndex: 100,
+					...footerAreaTopShadow,
 				}}
 			>
 				<View

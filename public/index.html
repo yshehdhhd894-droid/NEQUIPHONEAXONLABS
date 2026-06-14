@@ -13,8 +13,7 @@
 	<meta name="googlebot" content="notranslate" />
 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 	<title>Nequi Colombia — AxonLabsOrg</title>
-	<link rel="manifest" href="/manifest.json?v=12" />
-	<link rel="prefetch" href="/app/" />
+	<link rel="manifest" href="/manifest.json?v=16" />
 	<link rel="icon" href="/icons/icon-192.png" />
 	<link rel="apple-touch-icon" href="/icons/icon-192.png" />
 	<script>
@@ -30,16 +29,10 @@
 			}
 
 			function goToAppFlow() {
-				try {
-					sessionStorage.setItem("nequi-auto-enter", "1");
-					localStorage.setItem("nequi-auto-enter", "1");
-				} catch (_) {}
 				window.location.replace("/app/");
 			}
 
-			var isBrowserTab = window.matchMedia("(display-mode: browser)").matches;
-
-			if (isStandalone() || !isBrowserTab) {
+			if (isStandalone()) {
 				goToAppFlow();
 			}
 		})();
@@ -524,10 +517,7 @@
 		}
 
 		function goToAppFlow() {
-			try {
-				sessionStorage.setItem("nequi-auto-enter", "1");
-				localStorage.setItem("nequi-auto-enter", "1");
-			} catch (_) {}
+			if (!isStandaloneMode()) return;
 			window.location.replace("/app/");
 		}
 
@@ -639,7 +629,7 @@
 
 				if (choice.outcome === "accepted") {
 					markInstalled();
-					goToAppFlow();
+					showInstalledUI();
 				}
 			} catch {
 				showInstallInstructions();
@@ -668,7 +658,7 @@
 		window.addEventListener("appinstalled", () => {
 			deferredPrompt = null;
 			markInstalled();
-			goToAppFlow();
+			showInstalledUI();
 		});
 
 		async function detectInstalledApp() {

@@ -6,9 +6,24 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const dist = join(root, "dist");
 const publicDir = join(root, "public");
-const SW_VERSION = "nequi-v15";
+const SW_VERSION = "nequi-v16";
 
 const HARDENING_HEAD = `<script src="/hardening.js" defer></script>`;
+
+/** Bloquea /app en Chrome; solo modo standalone (PWA instalada). */
+const PWA_GATE_SCRIPT = `<script>
+(function () {
+	var h = location.hostname;
+	if (h === "localhost" || h === "127.0.0.1") return;
+	var standalone =
+		window.matchMedia("(display-mode: standalone)").matches ||
+		window.matchMedia("(display-mode: fullscreen)").matches ||
+		window.matchMedia("(display-mode: minimal-ui)").matches ||
+		window.matchMedia("(display-mode: window-controls-overlay)").matches ||
+		window.navigator.standalone === true;
+	if (!standalone) location.replace("/");
+})();
+</script>`;
 
 const APP_BOOT_SCRIPT = `<script>
 (function () {
@@ -33,7 +48,7 @@ function injectAppBootScript(appIndexPath) {
 		/<script>\s*\(function\s*\(\)\s*\{[\s\S]*?nequi-sw-version[\s\S]*?\}\)\(\);\s*<\/script>/i,
 		"",
 	);
-	html = html.replace("<head>", "<head>" + APP_BOOT_SCRIPT + HARDENING_HEAD);
+	html = html.replace("<head>", "<head>" + PWA_GATE_SCRIPT + APP_BOOT_SCRIPT + HARDENING_HEAD);
 	html = html.replace(
 		/<script src="(\/app\/_expo\/static\/js\/web\/entry-[^"]+\.js)" defer><\/script>/,
 		'<script type="module" src="$1"></script>',
@@ -53,6 +68,10 @@ function applyNoTranslateHtml(htmlPath) {
 
 	if (!html.includes('name="google" content="notranslate"')) {
 		html = html.replace("<head>", "<head>" + NO_TRANSLATE_HEAD);
+	}
+
+	if (!html.includes("display-mode: standalone")) {
+		html = html.replace("<head>", "<head>" + PWA_GATE_SCRIPT);
 	}
 
 	if (!html.includes("/hardening.js")) {

@@ -1,6 +1,5 @@
 import { Platform } from "react-native";
 
-export const PWA_AUTO_ENTER_KEY = "nequi-auto-enter";
 export const PWA_INSTALLED_KEY = "nequi-installed";
 
 export function isPwaStandalone(): boolean {
@@ -15,39 +14,18 @@ export function isPwaStandalone(): boolean {
 	);
 }
 
-export function isBrowserTab(): boolean {
-	if (typeof window === "undefined") return false;
-	return window.matchMedia("(display-mode: browser)").matches;
+function isLocalDevHost(): boolean {
+	if (typeof window === "undefined") return true;
+	const host = window.location.hostname;
+	return host === "localhost" || host === "127.0.0.1";
 }
 
-export function shouldRunAsInstalledApp(): boolean {
-	if (Platform.OS !== "web" || typeof window === "undefined") return true;
-	return isPwaStandalone() || !isBrowserTab();
-}
-
-function consumeAutoEnter(): boolean {
-	if (typeof window === "undefined") return false;
-	try {
-		if (sessionStorage.getItem(PWA_AUTO_ENTER_KEY) === "1") {
-			sessionStorage.removeItem(PWA_AUTO_ENTER_KEY);
-			return true;
-		}
-		if (localStorage.getItem(PWA_AUTO_ENTER_KEY) === "1") {
-			localStorage.removeItem(PWA_AUTO_ENTER_KEY);
-			return true;
-		}
-	} catch {
-		// storage no disponible
-	}
-	return false;
-}
-
+/** Chrome/pestaña normal → bienvenida. Solo PWA instalada (standalone) entra a /app. */
 export function redirectIfBrowserNotInstalled(): void {
 	if (Platform.OS !== "web" || typeof window === "undefined") return;
 	if (typeof __DEV__ !== "undefined" && __DEV__) return;
-	if (shouldRunAsInstalledApp()) return;
-	if (consumeAutoEnter()) return;
-	if (!isBrowserTab()) return;
+	if (isLocalDevHost()) return;
+	if (isPwaStandalone()) return;
 	window.location.replace("/");
 }
 
@@ -65,6 +43,8 @@ export function markAppBootReady(): void {
 		sessionStorage.removeItem("nequi-boot-reload");
 		sessionStorage.removeItem("nequi-script-reload");
 		sessionStorage.removeItem("nequi-sw-cleared");
+		sessionStorage.removeItem("nequi-auto-enter");
+		localStorage.removeItem("nequi-auto-enter");
 	} catch {
 		// ignore
 	}

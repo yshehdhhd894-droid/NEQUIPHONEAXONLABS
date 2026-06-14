@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Animated, Easing } from "react-native";
+import { Animated, Easing, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NequiAmountInfoBanner } from "@/components/send/nequi-amount-info-banner";
 
@@ -60,7 +60,7 @@ export function NequiAmountInfoToast({ visible }: Props) {
 		<Animated.View
 			pointerEvents="none"
 			style={{
-				position: "absolute",
+				position: Platform.OS === "web" ? ("fixed" as const) : "absolute",
 				top: 0,
 				left: HORIZONTAL_MARGIN,
 				right: HORIZONTAL_MARGIN,

@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import z from "zod";
@@ -41,6 +41,7 @@ export default function SendNequiForm() {
 	const [resolvingName, setResolvingName] = useState(false);
 	const [showAmountInfo, setShowAmountInfo] = useState(false);
 	const amountInfoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const amountInfoActiveRef = useRef(false);
 
 	useEffect(() => {
 		return () => {
@@ -50,16 +51,24 @@ export default function SendNequiForm() {
 		};
 	}, []);
 
-	const showAmountInfoBanner = () => {
+	const showAmountInfoBanner = useCallback(() => {
+		if (amountInfoActiveRef.current) {
+			return;
+		}
+
+		amountInfoActiveRef.current = true;
+		setShowAmountInfo(true);
+
 		if (amountInfoTimerRef.current) {
 			clearTimeout(amountInfoTimerRef.current);
 		}
-		setShowAmountInfo(true);
+
 		amountInfoTimerRef.current = setTimeout(() => {
 			setShowAmountInfo(false);
 			amountInfoTimerRef.current = null;
+			amountInfoActiveRef.current = false;
 		}, 3000);
-	};
+	}, []);
 
 	useEffect(() => {
 		void preloadVoucherAssets();

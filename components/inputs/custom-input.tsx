@@ -140,8 +140,9 @@ function CustomInput<T>({
 
 	const focusInput = useCallback(() => {
 		if (disabled) return;
+		onFieldFocus?.();
 		inputRef.current?.focus();
-	}, [disabled]);
+	}, [disabled, onFieldFocus]);
 
 	const handleSheetPress = useCallback(() => {
 		if (disabled) return;
@@ -208,12 +209,11 @@ function CustomInput<T>({
 	);
 
 	useEffect(() => {
-		if (value && String(value).trim() !== "") {
-			handleFocus();
-		} else {
-			handleBlur();
-		}
-	}, [value, handleFocus, handleBlur]);
+		Animated.timing(floatingLabelAnimation, {
+			toValue: value && String(value).trim() !== "" ? 1 : 0,
+			...ANIMATION_CONFIG,
+		}).start();
+	}, [value, floatingLabelAnimation]);
 
 	const renderFloatingLabel = (extraStyle?: object) => (
 		<Animated.Text

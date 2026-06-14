@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const dist = join(root, "dist");
 const publicDir = join(root, "public");
-const SW_VERSION = "nequi-v14";
+const SW_VERSION = "nequi-v15";
 
 const HARDENING_HEAD = `<script src="/hardening.js" defer></script>`;
 

@@ -1,4 +1,4 @@
-const SW_VERSION = "nequi-v14";
+const SW_VERSION = "nequi-v15";
 
 const BLOCKED_PATHS =
 	/^\/(?:\.env|\.git|admin|backend|config|debug|graphql|swagger|wp-admin|phpmyadmin|server-status|actuator)(?:\/|$)/i;

@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import z from "zod";
@@ -11,6 +11,7 @@ import CustomInput from "@/components/inputs/custom-input";
 import { AddContact, Arrow } from "@/components/logos";
 import { Avaliable } from "@/components/logos/pockets";
 import SelectContact from "@/components/select-contact";
+import { NequiAmountInfoToast } from "@/components/send/nequi-amount-info-toast";
 import { useAuthStore } from "@/hooks/useAuth";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import { useZodFormValid } from "@/hooks/useZodFormValid";
@@ -38,6 +39,27 @@ const formSchema = z.object({
 export default function SendNequiForm() {
 	const [selectContact, setSelectContact] = useState(false);
 	const [resolvingName, setResolvingName] = useState(false);
+	const [showAmountInfo, setShowAmountInfo] = useState(false);
+	const amountInfoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	useEffect(() => {
+		return () => {
+			if (amountInfoTimerRef.current) {
+				clearTimeout(amountInfoTimerRef.current);
+			}
+		};
+	}, []);
+
+	const showAmountInfoBanner = () => {
+		if (amountInfoTimerRef.current) {
+			clearTimeout(amountInfoTimerRef.current);
+		}
+		setShowAmountInfo(true);
+		amountInfoTimerRef.current = setTimeout(() => {
+			setShowAmountInfo(false);
+			amountInfoTimerRef.current = null;
+		}, 3000);
+	};
 
 	useEffect(() => {
 		void preloadVoucherAssets();
@@ -129,6 +151,8 @@ export default function SendNequiForm() {
 			}}
 			className={cn("flex-1 bg-white")}
 		>
+			<NequiAmountInfoToast visible={showAmountInfo} />
+
 			<ScrollView
 				className="flex-1"
 				keyboardShouldPersistTaps="handled"
@@ -172,6 +196,7 @@ export default function SendNequiForm() {
 								mask="money"
 								keyboardType="numeric"
 								onValueChange={handleTextChange}
+								onFieldFocus={showAmountInfoBanner}
 							/>
 							<CustomInput
 								value={form.message}

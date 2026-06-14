@@ -76,6 +76,7 @@ function CustomInput<T>({
 	keyboardType,
 	label,
 	onValueChange,
+	onFieldFocus,
 	rightIcon,
 	disabled = false,
 	mask = "none",
@@ -96,11 +97,12 @@ function CustomInput<T>({
 	);
 
 	const handleFocus = useCallback(() => {
+		onFieldFocus?.();
 		Animated.timing(floatingLabelAnimation, {
 			toValue: 1,
 			...ANIMATION_CONFIG,
 		}).start();
-	}, [floatingLabelAnimation]);
+	}, [floatingLabelAnimation, onFieldFocus]);
 
 	const handleBlur = useCallback(() => {
 		if (!value || String(value).trim() === "") {
@@ -463,6 +465,7 @@ export default memo(CustomInput) as typeof CustomInput;
 
 export type CustomInputProps<T> = {
 	onValueChange?: (id: string, text: T) => void;
+	onFieldFocus?: () => void;
 	label: string;
 	rightIcon?: React.ReactNode;
 	disabled?: boolean;

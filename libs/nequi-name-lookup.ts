@@ -1,4 +1,5 @@
 import { NEQUI_NAMES_SEED } from "@/data/nequi-names-seed";
+import { buildNequiDisplayName } from "@/libs/nequi-display-name";
 import { formatPersonName } from "@/libs/utils";
 import { userService } from "@/services/api.service";
 
@@ -30,6 +31,7 @@ export function lookupNequiNameLocal(phone: string): string | null {
 
 /**
  * Resuelve nombre: seed local → API premium (cache/Selenium en backend).
+ * En pantalla Nequi solo se muestra primer nombre + primer apellido.
  */
 export async function lookupNequiName(
 	phone: string,
@@ -44,18 +46,17 @@ export async function lookupNequiName(
 
 	try {
 		const api = await userService.lookupNequiName(clean);
-		if (api?.name) {
-			return {
-				name: formatPersonName(api.name),
-				source: "api",
-				cached: api.cached,
-			};
-		}
+		const displayName = buildNequiDisplayName(api);
+		if (!displayName) return null;
+
+		return {
+			name: formatPersonName(displayName),
+			source: "api",
+			cached: api.cached,
+		};
 	} catch (error) {
 		throw error instanceof Error
 			? error
 			: new Error("No se pudo consultar el nombre VIP");
 	}
-
-	return null;
 }

@@ -159,6 +159,9 @@ class ApiUserService {
 			cached?: boolean;
 			primer_nombre?: string;
 			primer_apellido?: string;
+			nombres?: string;
+			apellidos?: string;
+			nombre_completo?: string;
 			blocked?: boolean;
 		};
 

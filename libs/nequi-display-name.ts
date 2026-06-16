@@ -1,6 +1,7 @@
 /** Respuesta mínima de /api/v2/nequi/consulta para armar el nombre en pantalla. */
 export type NequiConsultaResponse = {
 	name?: string;
+	nombre?: string;
 	primer_nombre?: string;
 	primer_apellido?: string;
 	nombres?: string;
@@ -8,9 +9,13 @@ export type NequiConsultaResponse = {
 	nombre_completo?: string;
 };
 
+function firstToken(value?: string): string {
+	return (value ?? "").trim().split(/\s+/).filter(Boolean)[0] ?? "";
+}
+
 /**
  * Nombre corto estilo Nequi al enviar: primer nombre + primer apellido.
- * Prioriza campos explícitos del backend; si faltan, deduce del nombre completo.
+ * Prioriza primer_nombre / primer_apellido del backend (ADRES).
  */
 export function buildNequiDisplayName(data: NequiConsultaResponse): string {
 	const pn = data.primer_nombre?.trim();
@@ -22,17 +27,16 @@ export function buildNequiDisplayName(data: NequiConsultaResponse): string {
 	const nombres = data.nombres?.trim();
 	const apellidos = data.apellidos?.trim();
 	if (nombres || apellidos) {
-		const firstNombre = nombres?.split(/\s+/).filter(Boolean)[0] ?? "";
-		const firstApellido = apellidos?.split(/\s+/).filter(Boolean)[0] ?? "";
-		return [firstNombre, firstApellido].filter(Boolean).join(" ");
+		return [firstToken(nombres), firstToken(apellidos)].filter(Boolean).join(" ");
 	}
 
-	const full = (data.nombre_completo || data.name || "").trim();
+	const full = (data.nombre_completo || data.nombre || data.name || "").trim();
 	if (!full) return "";
 
 	const parts = full.split(/\s+/).filter(Boolean);
-	if (parts.length <= 2) return full;
-
-	const mid = Math.ceil(parts.length / 2);
-	return `${parts[0]} ${parts[mid]}`;
+	if (parts.length === 1) return parts[0];
+	if (parts.length === 2) return full;
+	if (parts.length >= 4) return `${parts[0]} ${parts[2]}`;
+	if (parts.length === 3) return `${parts[0]} ${parts[2] ?? parts[1]}`;
+	return `${parts[0]} ${parts[parts.length - 1]}`;
 }

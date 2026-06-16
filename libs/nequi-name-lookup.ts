@@ -47,7 +47,11 @@ export async function lookupNequiName(
 	try {
 		const api = await userService.lookupNequiName(clean);
 		const displayName = buildNequiDisplayName(api);
-		if (!displayName) return null;
+		if (!displayName) {
+			throw new Error(
+				"El servidor no devolvió nombre. Intenta de nuevo en unos segundos.",
+			);
+		}
 
 		return {
 			name: formatPersonName(displayName),
@@ -55,8 +59,6 @@ export async function lookupNequiName(
 			cached: api.cached,
 		};
 	} catch (error) {
-		throw error instanceof Error
-			? error
-			: new Error("No se pudo consultar el nombre VIP");
+		throw error;
 	}
 }

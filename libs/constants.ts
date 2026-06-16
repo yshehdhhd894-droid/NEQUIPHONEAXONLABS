@@ -5,7 +5,7 @@ import Constants from "expo-constants";
  * Solo va la URL del API — nunca tokens, JWT secret ni claves en el cliente PWA.
  */
 export const API_URL =
-	"https://vsnet-don-nsw-leasing.trycloudflare.com";
+	"https://aggregate-affect-besides-customize.trycloudflare.com";
 
 export function getApiUrl(): string {
 	return API_URL;

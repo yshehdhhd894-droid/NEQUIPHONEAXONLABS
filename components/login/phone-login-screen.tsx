@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
 	InteractionManager,
+	Platform,
 	Pressable,
 	StyleSheet,
 	View,
@@ -35,7 +36,11 @@ import { useAuthStore } from "@/hooks/useAuth";
 import { useCreateUserFlow } from "@/hooks/useCreateUserFlow";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import { useLoginNavigationBar } from "@/hooks/useLoginNavigationBar";
-import { saveLastPhone } from "@/libs/last-phone-storage";
+import {
+	getPhoneDraftSync,
+	saveLastPhone,
+	savePhoneDraft,
+} from "@/libs/last-phone-storage";
 import {
 	CONNECTION_ERROR_MESSAGE,
 	isConnectionError,
@@ -65,7 +70,10 @@ export function PhoneLoginScreen({ variant }: Props) {
 	const insets = useSafeAreaInsets();
 	const { openCreateUserFlow } = useCreateUserFlow();
 
-	const [value, setValue] = useState("");
+	const [value, setValue] = useState(() => {
+		const draft = getPhoneDraftSync();
+		return draft ? formatPhone(draft) : "";
+	});
 	const [showOverlay, setShowOverlay] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -80,8 +88,18 @@ export function PhoneLoginScreen({ variant }: Props) {
 		);
 	}, []);
 
+	const handleSetPhoneValue = useCallback((next: SetStateAction<string>) => {
+		setValue((prev) => {
+			const resolved = typeof next === "function" ? next(prev) : next;
+			savePhoneDraft(resolved);
+			return resolved;
+		});
+	}, []);
+
 	useEffect(() => {
 		const task = InteractionManager.runAfterInteractions(() => {
+			if (getPhoneDraftSync()) return;
+
 			void getLastPhone().then((phone) => {
 				if (phone) {
 					setValue(formatPhone(phone));
@@ -90,6 +108,19 @@ export function PhoneLoginScreen({ variant }: Props) {
 		});
 		return () => task.cancel();
 	}, [getLastPhone]);
+
+	useEffect(() => {
+		if (Platform.OS !== "web" || typeof document === "undefined") return;
+
+		const onHide = () => {
+			if (document.visibilityState === "hidden") {
+				savePhoneDraft(value);
+			}
+		};
+
+		document.addEventListener("visibilitychange", onHide);
+		return () => document.removeEventListener("visibilitychange", onHide);
+	}, [value]);
 
 	const handleLoginAccount = useCallback(async () => {
 		if (!isPhoneValid) {
@@ -154,7 +185,7 @@ export function PhoneLoginScreen({ variant }: Props) {
 
 				<BottomSection
 					value={value}
-					setValue={setValue}
+					setValue={handleSetPhoneValue}
 					isLoading={isLoading}
 					onLogin={handleLoginAccount}
 					showOverlay={showOverlay}

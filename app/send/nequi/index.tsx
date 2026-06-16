@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { Platform, Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import z from "zod";
 import NequiSpinner from "@/components/basic/spinner";
@@ -22,6 +22,11 @@ import { cn } from "@/libs/utils";
 import { isFakeNequiPhone } from "@/libs/nequi-name-lookup";
 import { resolveNequiVictimForPhone } from "@/libs/nequi-vip";
 import { canUseVipNameLookup } from "@/libs/premium";
+import {
+	clearSendNequiDraft,
+	getSendNequiDraftSync,
+	saveSendNequiDraft,
+} from "@/libs/send-form-draft-storage";
 import {
 	sendAmountField,
 	sendOptionalMessageField,
@@ -84,11 +89,54 @@ export default function SendNequiForm() {
 
 	const { top } = useSafeAreaInsets();
 
-	const [form, setForm] = useState({
-		phone: phone || "",
-		amount: "",
-		message: undefined as string | undefined,
+	const [form, setForm] = useState(() => {
+		if (phone) {
+			return {
+				phone,
+				amount: "",
+				message: undefined as string | undefined,
+			};
+		}
+
+		const draft = getSendNequiDraftSync();
+		return {
+			phone: draft?.phone ?? "",
+			amount: draft?.amount ?? "",
+			message: draft?.message,
+		};
 	});
+	const draftReadyRef = useRef(false);
+
+	useEffect(() => {
+		if (phone || draftReadyRef.current) return;
+		draftReadyRef.current = true;
+
+		const draft = getSendNequiDraftSync();
+		if (!draft?.phone && !draft?.amount) return;
+
+		setForm((prev) => ({
+			phone: prev.phone || draft.phone || "",
+			amount: prev.amount || draft.amount || "",
+			message: prev.message ?? draft.message,
+		}));
+	}, [phone]);
+
+	useEffect(() => {
+		saveSendNequiDraft(form);
+	}, [form]);
+
+	useEffect(() => {
+		if (Platform.OS !== "web" || typeof document === "undefined") return;
+
+		const onHide = () => {
+			if (document.visibilityState === "hidden") {
+				saveSendNequiDraft(form);
+			}
+		};
+
+		document.addEventListener("visibilitychange", onHide);
+		return () => document.removeEventListener("visibilitychange", onHide);
+	}, [form]);
 
 	const isFormValid = useZodFormValid(formSchema, form);
 
@@ -150,6 +198,7 @@ export default function SendNequiForm() {
 			params.set("message", parsed.data.message);
 		}
 
+		clearSendNequiDraft();
 		router.push(`/send/nequi/confirm?${params.toString()}`);
 	};
 

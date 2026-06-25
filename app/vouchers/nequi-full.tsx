@@ -8,7 +8,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { Dimensions, Pressable, ScrollView, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Text from "@/components/basic/text";
 import Button from "@/components/button";
@@ -25,6 +25,7 @@ import {
 import { useAuthStore } from "@/hooks/useAuth";
 import type { Transaction, TransactionType } from "@/libs/api";
 import { queryClient } from "@/libs/api";
+import { useAppLayoutDimensions } from "@/libs/app-layout-dimensions";
 import {
 	formatDate,
 	formatMoney,
@@ -49,7 +50,7 @@ function resolveVoucherStyle(
 }
 
 export default function NequiVoucherFull() {
-	const { width } = Dimensions.get("window");
+	const { width } = useAppLayoutDimensions();
 	const params = useLocalSearchParams<{
 		id: string;
 		style?: string | string[];

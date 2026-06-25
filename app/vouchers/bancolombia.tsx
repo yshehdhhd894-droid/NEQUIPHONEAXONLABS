@@ -2,7 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { useRef, useState } from "react";
-import { Dimensions, Pressable, ScrollView, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Text from "@/components/basic/text";
 import Button from "@/components/button";
@@ -15,6 +15,7 @@ import {
 } from "@/components/voucher/zigzag-border";
 import { useDeferredVoucherGraphics } from "@/hooks/useDeferredVoucherGraphics";
 import { useVoucherScrollBottomPadding } from "@/hooks/useBottomInset";
+import { useAppLayoutDimensions } from "@/libs/app-layout-dimensions";
 import type { Transaction } from "@/libs/api";
 import { queryClient } from "@/libs/api";
 import {
@@ -29,7 +30,7 @@ const VOUCHER_ESTIMATED_HEIGHT = 520;
 export default function BancolombiaVoucher() {
 	const { top } = useSafeAreaInsets();
 	const scrollBottom = useVoucherScrollBottomPadding();
-	const { width } = Dimensions.get("window");
+	const { width } = useAppLayoutDimensions();
 	const params = useLocalSearchParams<{ id: string }>();
 	const id = Array.isArray(params.id) ? params.id[0] : params.id;
 	const [contentHeight, setContentHeight] = useState(VOUCHER_ESTIMATED_HEIGHT);

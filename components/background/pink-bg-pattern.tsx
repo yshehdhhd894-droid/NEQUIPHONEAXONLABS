@@ -1,19 +1,25 @@
-import { Dimensions, View } from "react-native";
+import { useMemo } from "react";
+import { View } from "react-native";
 import Svg, {
 	G,
 	Mask,
 	Path,
 	Rect,
 } from "react-native-svg";
-
-const { width: SCREEN_W } = Dimensions.get("window");
-const { height: SCREEN_H } = Dimensions.get("window");
+import { useAppLayoutDimensions } from "@/libs/app-layout-dimensions";
 
 const SVG_W = 250;
 const SVG_H = 200;
-const SCALE = Math.max(SCREEN_W / SVG_W, SCREEN_H / SVG_H) * 1.3;
 
 export function PinkBgPattern() {
+	const { width: screenW, height: screenH } = useAppLayoutDimensions();
+	const { scale, left } = useMemo(() => {
+		const s = Math.max(screenW / SVG_W, screenH / SVG_H) * 1.3;
+		return {
+			scale: s,
+			left: screenW / 2 - (SVG_W * s) / 2,
+		};
+	}, [screenW, screenH]);
 	return (
 		<View
 			style={{
@@ -31,13 +37,13 @@ export function PinkBgPattern() {
 				style={{
 					position: "absolute",
 					bottom: -20,
-					left: SCREEN_W / 2 - (SVG_W * SCALE) / 2,
+					left,
 					opacity: 0.5,
 				}}
 			>
 				<Svg
-					width={SVG_W * SCALE}
-					height={SVG_H * SCALE}
+					width={SVG_W * scale}
+					height={SVG_H * scale}
 					viewBox="0 0 250 200"
 				>
 					<Mask id="mask0" maskType="luminance" x="0" y="0" width="250" height="200">

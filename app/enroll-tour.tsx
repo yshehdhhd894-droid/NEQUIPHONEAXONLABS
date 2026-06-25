@@ -1,7 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-	Dimensions,
 	NativeScrollEvent,
 	NativeSyntheticEvent,
 	Pressable,
@@ -13,6 +12,7 @@ import { StatusBar } from "expo-status-bar";
 import Text from "@/components/basic/text";
 import EnrollTourSlidePage from "@/components/enroll-tour/enroll-tour-slide";
 import { ENROLL_TOUR_SLIDES } from "@/libs/enroll-tour";
+import { useAppLayoutDimensions } from "@/libs/app-layout-dimensions";
 import {
 	setSystemNavBarDefault,
 	setSystemNavBarLogin,
@@ -26,7 +26,7 @@ const CREATE_NEQUI_LABEL = "Crea tu Nequi";
 const LAST_INDEX = ENROLL_TOUR_SLIDES.length - 1;
 
 export default function EnrollTourScreen() {
-	const { width } = Dimensions.get("window");
+	const { width } = useAppLayoutDimensions();
 	const [index, setIndex] = useState(0);
 	const scrollRef = useRef<ScrollView>(null);
 	const indexRef = useRef(0);

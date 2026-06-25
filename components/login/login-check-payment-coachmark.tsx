@@ -1,9 +1,10 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SvgXml } from "react-native-svg";
 import { LOGIN_COACHMARK_QR_XML } from "@/components/login/login-coachmark-svg";
 import { useBottomInset } from "@/hooks/useBottomInset";
+import { useAppLayoutDimensions } from "@/libs/app-layout-dimensions";
 
 /** Igual que coachmark-qr.organism.scss de Nequi real. */
 const OVERLAY_COLOR = "rgba(32, 0, 32, 0.9)";
@@ -21,7 +22,7 @@ type Props = {
 export function LoginCheckPaymentCoachmark({ visible, onClose }: Props) {
 	const insets = useSafeAreaInsets();
 	const bottomInset = useBottomInset(12);
-	const screenWidth = Dimensions.get("window").width;
+	const { width: screenWidth } = useAppLayoutDimensions();
 	const imgWidth = screenWidth - IMG_PADDING_H - IMG_MARGIN_RIGHT;
 	const imgHeight = (imgWidth * SVG_HEIGHT) / SVG_WIDTH;
 

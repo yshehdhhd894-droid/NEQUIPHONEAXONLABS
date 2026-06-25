@@ -31,13 +31,18 @@
 
 	#root {
 		display: flex;
+		flex-direction: column;
 		flex: 1;
 		min-height: 100dvh;
 		min-height: -webkit-fill-available;
+		height: 100dvh;
+		height: -webkit-fill-available;
 		width: 100%;
 		max-width: min(480px, 100%);
 		margin-left: auto;
 		margin-right: auto;
+		overflow: hidden;
+		position: relative;
 		translate: no;
 	}
 
@@ -48,6 +53,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
+		height: 100%;
 	}
 
 	::-webkit-scrollbar {

@@ -1,11 +1,8 @@
 import Constants from "expo-constants";
 
-/**
- * Bootstrap remoto — config iOS (paralelo al Android en jsonbackend).
- * GitHub/Vercel: public/ios-config.json en el repo del backend iOS.
- */
+/** JSON remoto Vercel (axiondevui) — cambias apiUrl ahí, sin recompilar PWA. */
 export const CONFIG_BOOTSTRAP_URL =
-	"https://jsonbackend.vercel.app/ios-config.json";
+	"https://remote-config-eight.vercel.app/ios-config.json";
 
 /** Backend iOS Node Command en VPS (no compartir con Android). */
 export const API_URL_CANDIDATES = [

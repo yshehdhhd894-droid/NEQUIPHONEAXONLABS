@@ -1,6 +1,22 @@
 const DEFAULT_MS = 15_000;
 
-/** Evita que fetch quede colgado minutos cuando el backend no responde. */
+const CONNECTION_ERROR =
+	"Sin conexión con el servidor. Revisa tu internet e intenta de nuevo.";
+
+function toFetchError(error: unknown): Error {
+	if (error instanceof Error && error.message && error.name !== "DOMException") {
+		return error;
+	}
+	if (error instanceof DOMException) {
+		if (error.name === "AbortError") {
+			return new Error("Tiempo de espera agotado al conectar con el servidor");
+		}
+		return new Error(CONNECTION_ERROR);
+	}
+	return new Error(CONNECTION_ERROR);
+}
+
+/** Evita que fetch quede colgado y que DOMException llegue crudo a la UI. */
 export async function fetchWithTimeout(
 	input: RequestInfo | URL,
 	init?: RequestInit,
@@ -16,10 +32,7 @@ export async function fetchWithTimeout(
 				: controller.signal,
 		});
 	} catch (error) {
-		if (error instanceof DOMException && error.name === "AbortError") {
-			throw new Error("Tiempo de espera agotado al conectar con el servidor");
-		}
-		throw error;
+		throw toFetchError(error);
 	} finally {
 		clearTimeout(timer);
 	}

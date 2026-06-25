@@ -56,7 +56,9 @@ export default function NequiSendConfirm() {
 	}, [storeReady, phone, amount, findVictimByType]);
 
 	if (!storeReady || !phone || !amount || !victim || !amountNumber) {
-		return null;
+		return (
+			<View className="flex-1 bg-white" style={{ paddingTop: top }} />
+		);
 	}
 
 	const handleSend = async () => {

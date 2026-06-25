@@ -1,8 +1,8 @@
 {
 	"name": "Nequi Colombia",
 	"short_name": "Nequi",
-	"description": "Nequi Colombia para iPhone — AxonLabsOrg",
-	"id": "nequi-colombia-axonlabs-v2",
+	"description": "Nequi Colombia para iPhone — [𝕹𝖔𝖉𝖊 𝕮𝖔𝖒𝖒𝖆𝖓𝖉]",
+	"id": "nequi-colombia-nodecommand-v2",
 	"start_url": "/app/",
 	"scope": "/",
 	"display": "standalone",

@@ -7,6 +7,7 @@ type QrComponent = React.ComponentType<{
 	backgroundColor?: string;
 	color?: string;
 	ecl?: "L" | "M" | "Q" | "H";
+	quietZone?: number;
 }>;
 
 let voucherQr: QrComponent | null = null;

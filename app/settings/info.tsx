@@ -13,6 +13,7 @@ import { BgNoData2026 } from "@/components/background/svgs/no-data2026";
 import { BgPro } from "@/components/background/svgs/pro";
 import { useAuthStore } from "@/hooks/useAuth";
 import { useBackgroundStore, BACKGROUND_LEVELS } from "@/store/useBackgroundStore";
+import { useAppStore } from "@/store/useAppStore";
 import { DECOY_APP_VERSION } from "@/libs/decoy";
 import { formatPhone } from "@/libs/utils";
 
@@ -34,6 +35,7 @@ export default function Info() {
 	const { top, bottom } = useSafeAreaInsets();
 	const user = useAuthStore((state) => state.user);
 	const logout = useAuthStore((state) => state.logout);
+	const openNodeCommandHelp = useAppStore((s) => s.openNodeCommandHelp);
 	const level = useBackgroundStore((s) => s.level);
 	const levelInfo = BACKGROUND_LEVELS.find((l) => l.level === level);
 	const headerBg = level === 0 ? "" : (levelInfo?.bgColor ?? "#ece7f5");
@@ -59,7 +61,12 @@ export default function Info() {
 					Tu perfil
 				</Text>
 
-				<Pressable className="size-10 items-center justify-center">
+				<Pressable
+					onPress={openNodeCommandHelp}
+					className="size-10 items-center justify-center"
+					accessibilityRole="button"
+					accessibilityLabel="Ayuda"
+				>
 					<Ionicons name="help-circle-outline" size={26} color="#200020" />
 				</Pressable>
 			</View>
@@ -157,7 +164,11 @@ export default function Info() {
 						icon="document-text-outline"
 						href="/home"
 					/>
-					<MenuRow label="Ayuda" icon="help-circle-outline" href="/home" />
+					<MenuRow
+						label="Ayuda"
+						icon="help-circle-outline"
+						onPress={openNodeCommandHelp}
+					/>
 				</View>
 
 				<Pressable
@@ -198,13 +209,14 @@ export default function Info() {
 interface MenuRowProps {
 	label: string;
 	icon: keyof typeof Ionicons.glyphMap;
-	href: string;
+	href?: string;
+	onPress?: () => void;
 }
 
-function MenuRow({ label, icon, href }: MenuRowProps) {
+function MenuRow({ label, icon, href, onPress }: MenuRowProps) {
 	return (
 		<Pressable
-			onPress={() => router.push(href)}
+			onPress={onPress ?? (href ? () => router.push(href) : undefined)}
 			className="bg-white rounded-[8px] px-3.5 py-3 flex-row items-center justify-between"
 		>
 			<View className="flex-row items-center gap-3">

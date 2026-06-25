@@ -7,17 +7,21 @@ import {
 } from "@/hooks/useVoucherPreload";
 import { voucherQrValue } from "@/libs/base64";
 
-/** QR + marco menta + halo verde suave (como detalle del movimiento oficial). */
-const QR_SIZE = 116;
-const QR_PADDING = 5;
-const QR_BORDER_WIDTH = 1;
-const QR_BORDER_COLOR = "#9EDFC4";
-const QR_GREEN_HALO = 2;
-const QR_GREEN_BASE = "rgba(17, 218, 122, 0.22)";
-const QR_FRAME_SIZE = QR_SIZE + QR_PADDING * 2 + QR_BORDER_WIDTH * 2;
-const QR_OUTER_SIZE = QR_FRAME_SIZE + QR_GREEN_HALO * 2;
-const QR_LOGO_CIRCLE_SIZE = 28;
-const QR_LOGO_CIRCLE_BORDER = "#E0E0E0";
+/**
+ * Marco QR — HTML (.check--container--qr__animation + .qr__container + #qr-code).
+ * QR: negro puro, ecl M, logo N en círculo blanco centrado (APK Nequi real).
+ */
+const EM = 16;
+const QR_OUTER_SIZE = Math.round(8.5 * EM); // 136
+const QR_GREEN_PADDING = Math.round(0.25 * EM); // 4
+const QR_OUTER_RADIUS = Math.round(0.25 * EM); // 4
+const QR_INNER_RADIUS = 4;
+const QR_GREEN_BG = "rgba(17, 218, 122, 0.3)"; // --positive-30
+const QR_INNER_SIZE = QR_OUTER_SIZE - QR_GREEN_PADDING * 2; // 128
+const QR_DRAW_SIZE = QR_INNER_SIZE - Math.round(0.15 * EM) * 2; // 122
+const QR_LOGO_CIRCLE = Math.round(2.15 * EM); // ~34
+const QR_LOGO_MARK_W = 20;
+const QR_LOGO_MARK_H = 16;
 
 type TransactionQrProps = {
 	transactionId: string | undefined;
@@ -25,7 +29,7 @@ type TransactionQrProps = {
 	enabled?: boolean;
 };
 
-/** QR del comprobante — borde menta separado del QR + halo verde exterior. */
+/** QR del comprobante — diseño APK / HTML original. */
 export function TransactionQr({
 	transactionId,
 	containerStyle,
@@ -50,30 +54,6 @@ export function TransactionQr({
 		return <View style={{ width: QR_OUTER_SIZE, height: QR_OUTER_SIZE }} />;
 	}
 
-	const frameStyle = {
-		width: QR_FRAME_SIZE,
-		height: QR_FRAME_SIZE,
-		backgroundColor: "#FFFFFF" as const,
-		borderWidth: QR_BORDER_WIDTH,
-		borderColor: QR_BORDER_COLOR,
-		borderRadius: 0,
-		padding: QR_PADDING,
-		alignItems: "center" as const,
-		justifyContent: "center" as const,
-	};
-
-	const logoCircleStyle = {
-		position: "absolute" as const,
-		width: QR_LOGO_CIRCLE_SIZE,
-		height: QR_LOGO_CIRCLE_SIZE,
-		borderRadius: QR_LOGO_CIRCLE_SIZE / 2,
-		backgroundColor: "#FFFFFF",
-		borderWidth: 1,
-		borderColor: QR_LOGO_CIRCLE_BORDER,
-		alignItems: "center" as const,
-		justifyContent: "center" as const,
-	};
-
 	return (
 		<View
 			className="items-center justify-center"
@@ -83,25 +63,54 @@ export function TransactionQr({
 				style={{
 					width: QR_OUTER_SIZE,
 					height: QR_OUTER_SIZE,
-					borderRadius: 4,
-					backgroundColor: QR_GREEN_BASE,
+					borderRadius: QR_OUTER_RADIUS,
+					backgroundColor: QR_GREEN_BG,
+					padding: QR_GREEN_PADDING,
 					alignItems: "center",
 					justifyContent: "center",
 				}}
 			>
-				<View style={frameStyle}>
+				<View
+					style={{
+						width: QR_INNER_SIZE,
+						height: QR_INNER_SIZE,
+						backgroundColor: "#FFFFFF",
+						borderRadius: QR_INNER_RADIUS,
+						alignItems: "center",
+						justifyContent: "center",
+						overflow: "hidden",
+					}}
+				>
 					{ready && QrCode ? (
 						<QrCode
-							size={QR_SIZE}
+							size={QR_DRAW_SIZE}
 							value={value}
 							backgroundColor="#FFFFFF"
-							color="#200020"
+							color="#000000"
+							ecl="M"
+							quietZone={0}
 						/>
 					) : (
-						<View style={{ width: QR_SIZE, height: QR_SIZE }} />
+						<View style={{ width: QR_DRAW_SIZE, height: QR_DRAW_SIZE }} />
 					)}
-					<View style={logoCircleStyle}>
-						<NequiQrLogoMark width={18} height={14} />
+					<View
+						pointerEvents="none"
+						style={{
+							position: "absolute",
+							width: QR_LOGO_CIRCLE,
+							height: QR_LOGO_CIRCLE,
+							borderRadius: QR_LOGO_CIRCLE / 2,
+							backgroundColor: "#FFFFFF",
+							alignItems: "center",
+							justifyContent: "center",
+							shadowColor: "#000000",
+							shadowOpacity: 0.04,
+							shadowRadius: 1,
+							shadowOffset: { width: 0, height: 0 },
+							elevation: 1,
+						}}
+					>
+						<NequiQrLogoMark width={QR_LOGO_MARK_W} height={QR_LOGO_MARK_H} />
 					</View>
 				</View>
 			</View>

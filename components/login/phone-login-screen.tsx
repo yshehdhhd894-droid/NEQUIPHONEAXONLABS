@@ -33,7 +33,6 @@ import { LoginPurpleLayout } from "@/components/login/login-purple-layout";
 import { LoginReturningFooter } from "@/components/login/login-returning-footer";
 import { IcoMoney } from "@/components/logos";
 import { useAuthStore } from "@/hooks/useAuth";
-import { useCreateUserFlow } from "@/hooks/useCreateUserFlow";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import { useLoginNavigationBar } from "@/hooks/useLoginNavigationBar";
 import {
@@ -68,7 +67,7 @@ export function PhoneLoginScreen({ variant }: Props) {
 	const { isKeyboardVisible } = useKeyboard();
 	const getLastPhone = useAuthStore((state) => state.getLastPhone);
 	const insets = useSafeAreaInsets();
-	const { openCreateUserFlow } = useCreateUserFlow();
+	const openNodeCommandHelp = useAppStore((s) => s.openNodeCommandHelp);
 
 	const [value, setValue] = useState(() => {
 		const draft = getPhoneDraftSync();
@@ -178,7 +177,7 @@ export function PhoneLoginScreen({ variant }: Props) {
 					) : (
 						<View style={styles.headerSpacer} />
 					)}
-					<LoginHelpButton onPress={openCreateUserFlow} />
+					<LoginHelpButton onPress={openNodeCommandHelp} />
 				</View>
 
 				<LoginLogoSection />

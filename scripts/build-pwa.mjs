@@ -133,6 +133,8 @@ for (const file of [
 	"pwa-gate.js",
 	"404.html",
 	"_redirects",
+	"_headers",
+	"cloudflare-deploy-check.txt",
 ]) {
 	cpSync(join(publicDir, file), join(dist, file));
 }

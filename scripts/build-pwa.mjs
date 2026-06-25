@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const dist = join(root, "dist");
 const publicDir = join(root, "public");
-const SW_VERSION = "nequi-v19";
+const SW_VERSION = "nequi-v20";
 
 const PWA_ACCESS_HEAD = `<script src="/pwa-access.js"></script>`;
 const PWA_GATE_HEAD = `<script src="/pwa-gate.js"></script>`;

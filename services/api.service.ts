@@ -6,7 +6,7 @@ import {
 	typeFetcher,
 	type Wallet,
 } from "@/libs/api";
-import { getApiUrl } from "@/libs/constants";
+import { getApiBaseUrl } from "@/libs/api-config";
 import { getUserFingerprint } from "@/libs/security";
 import type { TransferInput } from "@/store/useWalletStore";
 
@@ -125,16 +125,20 @@ class ApiUserService {
 			queryClient.getQueryData<string>(["token"]) ??
 			useAuthStore.getState().token;
 
+		if (!token?.trim()) {
+			throw new Error("Sesión expirada. Cierra sesión y vuelve a entrar.");
+		}
+
 		const controller = new AbortController();
 		const timeoutId = setTimeout(() => controller.abort(), 180_000);
 
 		let res: Response;
 		try {
-			res = await fetch(`${getApiUrl()}/api/v2/nequi/consulta`, {
+			res = await fetch(`${getApiBaseUrl()}/api/v2/nequi/consulta`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					...(token ? { Authorization: `Bearer ${token}` } : {}),
+					Authorization: `Bearer ${token.trim()}`,
 				},
 				body: JSON.stringify({ phone }),
 				signal: controller.signal,
@@ -162,11 +166,20 @@ class ApiUserService {
 			nombres?: string;
 			apellidos?: string;
 			nombre_completo?: string;
+			consulta?: {
+				nombre_completo?: string;
+				documento?: string;
+				numero?: string;
+			};
 			blocked?: boolean;
 		};
 
 		if (!res.ok) {
-			throw new Error(body.error ?? `Error consultando nombre (${res.status})`);
+			const err = body.error ?? `Error consultando nombre (${res.status})`;
+			if (res.status === 401 && /no autorizado|token/i.test(err)) {
+				throw new Error("Sesión expirada. Cierra sesión y vuelve a entrar.");
+			}
+			throw new Error(err);
 		}
 
 		return body;

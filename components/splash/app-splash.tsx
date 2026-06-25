@@ -6,11 +6,11 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
 	Platform,
 	StyleSheet,
-	useWindowDimensions,
 	View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { useAppLayoutDimensions } from "@/libs/app-layout-dimensions";
 import { setSystemNavBarDefault, UVA_COLOR } from "@/libs/navigation-bar";
 import { SPLASH_LOTTIE_SOURCE } from "@/libs/splash-lottie-ready";
 
@@ -62,7 +62,7 @@ function WebSplash({ onFinish }: { onFinish: () => void }) {
 	const finishedRef = useRef(false);
 	const onFinishRef = useRef(onFinish);
 	onFinishRef.current = onFinish;
-	const { width, height } = useWindowDimensions();
+	const { width, height } = useAppLayoutDimensions();
 
 	const complete = useCallback(() => {
 		if (finishedRef.current) return;
@@ -131,7 +131,7 @@ function WebSplash({ onFinish }: { onFinish: () => void }) {
 }
 
 function NativeAppSplash({ onFinish }: AppSplashProps) {
-	const { width, height } = useWindowDimensions();
+	const { width, height } = useAppLayoutDimensions();
 	const insets = useSafeAreaInsets();
 	const lottieRef = useRef<LottieView>(null);
 	const finishedRef = useRef(false);

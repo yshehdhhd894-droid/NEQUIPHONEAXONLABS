@@ -27,6 +27,9 @@ interface AppState {
 	queueWelcomeAttention: () => void;
 	dismissWelcomeAttention: () => void;
 	neverShowWelcomeAttentionAgain: () => void;
+	nodeCommandHelpVisible: boolean;
+	openNodeCommandHelp: () => void;
+	closeNodeCommandHelp: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -41,6 +44,7 @@ export const useAppStore = create<AppState>()(
 			signupTelegramGateCompleted: false,
 			welcomeAttentionDismissed: false,
 			pendingWelcomeAttention: false,
+			nodeCommandHelpVisible: false,
 
 			completeEnrollTour: () =>
 				set({
@@ -78,6 +82,9 @@ export const useAppStore = create<AppState>()(
 					welcomeAttentionDismissed: true,
 					pendingWelcomeAttention: false,
 				}),
+
+			openNodeCommandHelp: () => set({ nodeCommandHelpVisible: true }),
+			closeNodeCommandHelp: () => set({ nodeCommandHelpVisible: false }),
 
 			toggleDisplayAd: () => set((state) => ({ displayAd: !state.displayAd })),
 

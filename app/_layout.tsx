@@ -11,11 +11,17 @@ import { Toaster } from "sonner-native";
 import EnrollTourScreen from "@/app/enroll-tour";
 import { AppAlertHost } from "@/components/basic/app-alert-host";
 import { BreBSplashModal } from "@/components/modals/bre-b-splash-modal";
+import { NodeCommandHelpModal } from "@/components/help/node-command-help-modal";
 import { SplashSession } from "@/components/splash/splash-session";
 import { useAppFonts } from "@/hooks/useAppFonts";
 import { LoadingProvider } from "@/hooks/useLoading";
 import { ModalProvider } from "@/hooks/useModal";
-import { queryClient } from "@/libs/api";
+import { queryClient, configureApiClient } from "@/libs/api";
+import {
+	initApiConfig,
+	refreshApiConfigInBackground,
+	getApiBaseUrl,
+} from "@/libs/api-config";
 import {
 	APP_ALERT_BACKGROUND,
 	APP_ALERT_TEXT,
@@ -36,7 +42,7 @@ if (Platform.OS !== "web") {
 	void SplashScreen.preventAutoHideAsync();
 }
 
-type BootstrapPhase = "splash" | "app";
+type BootstrapPhase = "splash" | "resolving_api" | "app";
 
 function AppProviders({ children }: { children: ReactNode }) {
 	return (
@@ -74,6 +80,7 @@ function AppProviders({ children }: { children: ReactNode }) {
 					/>
 					<AppAlertHost />
 					<BreBSplashModal />
+					<NodeCommandHelpModal />
 					{children}
 				</ModalProvider>
 			</LoadingProvider>
@@ -142,8 +149,23 @@ export default function RootLayout() {
 	const handleSplashDone = useCallback(() => {
 		void setSystemNavBarDefault();
 		markAppBootReady();
-		setPhase("app");
+		setPhase("resolving_api");
 	}, []);
+
+	useEffect(() => {
+		if (phase !== "resolving_api") return;
+		initApiConfig()
+			.then((url) => {
+				configureApiClient(url);
+				void refreshApiConfigInBackground().then(() => {
+					configureApiClient(getApiBaseUrl());
+				});
+				setPhase("app");
+			})
+			.catch(() => {
+				setPhase("app");
+			});
+	}, [phase]);
 
 	if (phase === "splash") {
 		return (
@@ -152,6 +174,15 @@ export default function RootLayout() {
 				<View style={{ flex: 1, backgroundColor: UVA_COLOR }}>
 					<SplashSession onReady={handleSplashDone} fontsReady={fontsReady} />
 				</View>
+			</SafeAreaProvider>
+		);
+	}
+
+	if (phase === "resolving_api") {
+		return (
+			<SafeAreaProvider>
+				<StatusBar style="light" backgroundColor={UVA_COLOR} />
+				<View style={{ flex: 1, backgroundColor: UVA_COLOR }} />
 			</SafeAreaProvider>
 		);
 	}

@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
-import { Pressable, ScrollView, TextInput, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Platform, Pressable, ScrollView, TextInput, View } from "react-native";
 import Animated, {
 	Easing,
 	useAnimatedStyle,
@@ -17,7 +17,24 @@ import {
 	type VictimType,
 } from "@/store/useVictimsStore";
 
-const { State: TextInputState } = TextInput;
+function getFocusedInput(): { blur?: () => void; focus?: () => void } | null {
+	if (Platform.OS === "web") return null;
+	try {
+		const textInputState = (
+			TextInput as typeof TextInput & {
+				State?: {
+					currentlyFocusedInput?: () => {
+						blur?: () => void;
+						focus?: () => void;
+					} | null;
+				};
+			}
+		).State;
+		return textInputState?.currentlyFocusedInput?.() ?? null;
+	} catch {
+		return null;
+	}
+}
 
 interface Props {
 	onClose: () => void;
@@ -26,27 +43,49 @@ interface Props {
 }
 
 export default function SelectContact({ onClose, onPress, type }: Props) {
-	const currentlyFocusedField = TextInputState.currentlyFocusedInput();
 	const [searchQuery, setSearchQuery] = useState("");
 	const { top } = useSafeAreaInsets();
+	const useWebOverlay = Platform.OS === "web";
 
-	const scale = useSharedValue(0);
-	const opacity = useSharedValue(0);
+	const scale = useSharedValue(useWebOverlay ? 1 : 0);
+	const opacity = useSharedValue(useWebOverlay ? 1 : 0);
 
 	const dbVictims = useVictimsStore((state) => state.victims);
-	const victims = groupVictimsByFirstLetter(
-		type ? dbVictims.filter((victim) => victim.type === type) : dbVictims,
+	const victims = useMemo(
+		() =>
+			groupVictimsByFirstLetter(
+				type ? dbVictims.filter((victim) => victim.type === type) : dbVictims,
+			),
+		[dbVictims, type],
 	);
 
+	const filteredVictims = useMemo(() => {
+		const query = searchQuery.trim().toLowerCase();
+		if (!query) return victims;
+
+		const filtered: { [key: string]: Victim[] } = {};
+		for (const [letter, list] of Object.entries(victims)) {
+			const matches = list.filter(
+				(victim) =>
+					victim.name.toLowerCase().includes(query) ||
+					victim.value.replace(/\D/g, "").includes(query.replace(/\D/g, "")),
+			);
+			if (matches.length > 0) filtered[letter] = matches;
+		}
+		return filtered;
+	}, [searchQuery, victims]);
+
 	useEffect(() => {
-		currentlyFocusedField?.blur();
+		getFocusedInput()?.blur?.();
+
+		if (useWebOverlay) return;
 
 		scale.value = withTiming(1, {
 			duration: 500 * 2,
 			easing: Easing.out(Easing.exp),
 		});
 		opacity.value = withTiming(1, { duration: 500 });
-	}, []);
+	}, [opacity, scale, useWebOverlay]);
 
 	const overlayStyle = useAnimatedStyle(() => ({
 		opacity: opacity.value,
@@ -56,80 +95,101 @@ export default function SelectContact({ onClose, onPress, type }: Props) {
 	const handlePress = (victim: Victim) => {
 		onPress(victim);
 		onClose();
-
-		currentlyFocusedField?.focus();
+		getFocusedInput()?.focus?.();
 	};
 
-	return (
-		<Animated.View
-			style={[overlayStyle, { top }]}
-			className="flex-1 absolute z-50 h-full w-full bg-white"
-		>
-			<View>
-				<Pressable
-					onPress={onClose}
-					className="w-full p-2.5 items-center flex-row justify-between"
-				>
-					<View className="flex-row items-center gap-2">
-						<View className="size-8 justify-center">
-							<Arrow color="#200020" />
-						</View>
-
-						<Text fontWeight="bold" className="text-[18px] text-uva">
-							Contactos
-						</Text>
+	const content = (
+		<View style={{ flex: 1, paddingTop: top }}>
+			<Pressable
+				onPress={onClose}
+				className="w-full p-2.5 items-center flex-row justify-between"
+			>
+				<View className="flex-row items-center gap-2">
+					<View className="size-8 justify-center">
+						<Arrow color="#200020" />
 					</View>
 
-					<Ionicons name="refresh-outline" size={26} color="#200020" />
-				</Pressable>
-
-				<View className="w-full pt-4" style={{ paddingHorizontal: 24 }}>
-					<Ionicons
-						style={{
-							position: "absolute",
-							marginTop: 23,
-							marginLeft: 30,
-							zIndex: 10,
-							opacity: 0.6,
-						}}
-						name="search-outline"
-						size={24}
-						color="#200020"
-					/>
-					<TextInput
-						className="bg-[#fbf7fb] rounded-[8px]"
-						style={{ fontSize: 18, paddingLeft: 32 }}
-						placeholder="Busca"
-						value={searchQuery}
-						onChangeText={setSearchQuery}
-					/>
+					<Text fontWeight="bold" className="text-[18px] text-uva">
+						Contactos
+					</Text>
 				</View>
 
-				<ScrollView className="px-4">
-					<View className="bg-[#ece7f5] my-4 h-[1px] w-full" />
+				<Ionicons name="refresh-outline" size={26} color="#200020" />
+			</Pressable>
 
-					{Object.keys(victims).map((letter) => (
+			<View className="w-full pt-4" style={{ paddingHorizontal: 24 }}>
+				<Ionicons
+					style={{
+						position: "absolute",
+						marginTop: 23,
+						marginLeft: 30,
+						zIndex: 10,
+						opacity: 0.6,
+					}}
+					name="search-outline"
+					size={24}
+					color="#200020"
+				/>
+				<TextInput
+					className="bg-[#fbf7fb] rounded-[8px]"
+					style={{ fontSize: 18, paddingLeft: 32 }}
+					placeholder="Busca"
+					value={searchQuery}
+					onChangeText={setSearchQuery}
+				/>
+			</View>
+
+			<ScrollView className="px-4" style={{ flex: 1 }}>
+				<View className="bg-[#ece7f5] my-4 h-[1px] w-full" />
+
+				{Object.keys(filteredVictims).length === 0 ? (
+					<Text className="text-[15px] text-uva py-6 text-center">
+						No hay contactos guardados
+					</Text>
+				) : (
+					Object.keys(filteredVictims).map((letter) => (
 						<View key={letter} className="flex flex-col pb-4">
 							<Text className="text-[14px] text-uva font-bold">{letter}</Text>
-							{victims[letter].map((victim, index) => (
+							{filteredVictims[letter].map((victim, index) => (
 								<ContactItem
 									key={victim.id}
 									onPress={handlePress}
 									victim={victim}
 									colorIndex={
-										Object.keys(victims)
-											.slice(0, Object.keys(victims).indexOf(letter))
+										Object.keys(filteredVictims)
+											.slice(0, Object.keys(filteredVictims).indexOf(letter))
 											.reduce(
-												(acc, prevLetter) => acc + victims[prevLetter].length,
+												(acc, prevLetter) =>
+													acc + filteredVictims[prevLetter].length,
 												0,
 											) + index
 									}
 								/>
 							))}
 						</View>
-					))}
-				</ScrollView>
+					))
+				)}
+			</ScrollView>
+		</View>
+	);
+
+	if (useWebOverlay) {
+		return (
+			<View
+				className="flex-1 absolute z-50 h-full w-full bg-white"
+				style={{ top: 0, left: 0, right: 0, bottom: 0 }}
+			>
+				{content}
 			</View>
+		);
+	}
+
+	return (
+		<Animated.View
+			style={[overlayStyle, { top }]}
+			className="flex-1 absolute z-50 h-full w-full bg-white"
+		>
+			{content}
 		</Animated.View>
 	);
 }
@@ -168,7 +228,6 @@ function ContactItem({ victim, colorIndex, onPress }: ItemProps) {
 	);
 }
 
-// Function to group victims by their first letter
 function groupVictimsByFirstLetter(victims: Victim[]) {
 	const grouped: { [key: string]: Victim[] } = {};
 
@@ -180,7 +239,6 @@ function groupVictimsByFirstLetter(victims: Victim[]) {
 		grouped[firstLetter].push(victim);
 	});
 
-	// Sort the groups alphabetically
 	const sortedGroups: { [key: string]: Victim[] } = {};
 	Object.keys(grouped)
 		.sort()

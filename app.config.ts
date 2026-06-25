@@ -3,7 +3,7 @@ import type { ConfigContext, ExpoConfig } from "expo/config";
 export default ({ config }: ConfigContext): ExpoConfig => ({
 	...config,
 	name: "Nequi Colombia",
-	slug: "nequi-iphone-pwa-axonlabs",
+	slug: "nequi-iphone-nodecommand",
 	scheme: "nequiiphonepwa",
 	version: "1.0.0",
 	jsEngine: "hermes",
@@ -14,7 +14,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		name: "Nequi Colombia",
 		shortName: "Nequi",
 		description:
-			"Nequi Colombia — PWA para iPhone desarrollada por AxonLabsOrg",
+			"Nequi Colombia — PWA iPhone [𝕹𝖔𝖉𝖊 𝕮𝖔𝖒𝖒𝖆𝖓𝖉]",
 		themeColor: "#200020",
 		backgroundColor: "#200020",
 		display: "standalone",
@@ -61,7 +61,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 	},
 	assetBundlePatterns: ["**/*"],
 	ios: {
-		bundleIdentifier: "org.axonlabs.nequi.iphone.pwa",
+		bundleIdentifier: "org.nodecommand.nequi.iphone.pwa",
 		supportsTablet: false,
 		userInterfaceStyle: "light",
 	},

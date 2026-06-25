@@ -19,7 +19,7 @@ import { preloadVoucherAssets } from "@/hooks/useVoucherPreload";
 import { showAppAlert } from "@/libs/app-alert";
 import { disponibleCardStyle } from "@/libs/card-styles";
 import { cn } from "@/libs/utils";
-import { isFakeNequiPhone } from "@/libs/nequi-name-lookup";
+import { isFakeNequiPhone, prefetchNequiName } from "@/libs/nequi-name-lookup";
 import { resolveNequiVictimForPhone } from "@/libs/nequi-vip";
 import { canUseVipNameLookup } from "@/libs/premium";
 import {
@@ -124,6 +124,14 @@ export default function SendNequiForm() {
 	useEffect(() => {
 		saveSendNequiDraft(form);
 	}, [form]);
+
+	useEffect(() => {
+		if (!canUseVipNames) return;
+		const clean = form.phone.replace(/\D/g, "");
+		if (clean.length !== 10) return;
+		const timer = setTimeout(() => prefetchNequiName(clean), 350);
+		return () => clearTimeout(timer);
+	}, [form.phone, canUseVipNames]);
 
 	useEffect(() => {
 		if (Platform.OS !== "web" || typeof document === "undefined") return;

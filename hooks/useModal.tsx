@@ -8,7 +8,6 @@ import {
 	useState,
 } from "react";
 import {
-	Dimensions,
 	KeyboardAvoidingView,
 	Modal,
 	Platform,
@@ -25,8 +24,7 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { useKeyboard } from "@/hooks/useKeyboard";
-
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+import { useAppLayoutDimensions } from "@/libs/app-layout-dimensions";
 
 const ModalContext = createContext<{
 	show: (content: React.ReactNode) => void;
@@ -87,6 +85,7 @@ export function ModalOverlay({
 	content: React.ReactNode;
 	onClose: () => void;
 }) {
+	const { height: layoutHeight } = useAppLayoutDimensions();
 	const { bottom: safeBottom } = useSafeAreaInsets();
 	const sheetBottomInset = safeBottom;
 	const { isKeyboardVisible, keyboardHeight } = useKeyboard();
@@ -159,6 +158,7 @@ export function ModalOverlay({
 							sheetStyle,
 							{
 								paddingBottom: isKeyboardVisible ? 0 : sheetBottomInset,
+								maxHeight: layoutHeight * 0.9,
 							},
 						]}
 					>
@@ -211,7 +211,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "#FFFFFF",
 		borderTopLeftRadius: 20,
 		borderTopRightRadius: 20,
-		maxHeight: SCREEN_HEIGHT * 0.9,
 		overflow: "visible",
 	},
 	handle: {

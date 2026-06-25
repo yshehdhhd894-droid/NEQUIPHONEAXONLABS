@@ -8,6 +8,7 @@ import { LoginFooter } from "@/components/login/login-footer";
 import { LoginHelpButton } from "@/components/login/login-help-button";
 import { LoginLogoSection } from "@/components/login/login-logo-section";
 import { useCreateUserFlow } from "@/hooks/useCreateUserFlow";
+import { useAppStore } from "@/store/useAppStore";
 
 type Props = {
 	hideFooterCheckPayment?: boolean;
@@ -18,6 +19,7 @@ export function WelcomeLoginSelection({
 }: Props) {
 	const insets = useSafeAreaInsets();
 	const { openCreateUserFlow } = useCreateUserFlow();
+	const openNodeCommandHelp = useAppStore((s) => s.openNodeCommandHelp);
 	const [enterPressed, setEnterPressed] = useState(false);
 
 	const handleCreateNequi = useCallback(() => {
@@ -31,7 +33,7 @@ export function WelcomeLoginSelection({
 	return (
 		<View style={styles.screen}>
 			<View style={[styles.header, { marginTop: insets.top + 16 }]}>
-				<LoginHelpButton onPress={openCreateUserFlow} />
+				<LoginHelpButton onPress={openNodeCommandHelp} />
 			</View>
 
 			<LoginLogoSection />

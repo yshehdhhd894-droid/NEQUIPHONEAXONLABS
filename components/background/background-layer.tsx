@@ -1,5 +1,7 @@
-import { Dimensions, View } from "react-native";
+import { useMemo } from "react";
+import { View } from "react-native";
 import { type BackgroundLevel, BACKGROUND_LEVELS } from "@/store/useBackgroundStore";
+import { useAppLayoutDimensions } from "@/libs/app-layout-dimensions";
 
 import { BgNewProfile0 } from "./svgs/new-profile-0";
 import { BgNewProfile1 } from "./svgs/new-profile-1";
@@ -7,8 +9,6 @@ import { BgNewProfile2 } from "./svgs/new-profile-2";
 import { BgNewProfile3 } from "./svgs/new-profile-3";
 import { BgPro } from "./svgs/pro";
 
-const { width: SCREEN_W } = Dimensions.get("window");
-const { height: SCREEN_H } = Dimensions.get("window");
 const SVG_W = 250;
 const SVG_H = 200;
 
@@ -31,13 +31,23 @@ const svgSizes: Record<BackgroundLevel, { w: number; h: number }> = {
 };
 
 export function BackgroundLayer({ level }: { level: BackgroundLevel }) {
+	const { width: screenW, height: screenH } = useAppLayoutDimensions();
 	const info = BACKGROUND_LEVELS.find((l) => l.level === level);
 	const SvgComponent = svgMap[level];
 	const size = svgSizes[level];
 
-	if (!info || level === 0 || !SvgComponent) return null;
+	const { scale, left } = useMemo(() => {
+		if (!size.w || !size.h) {
+			return { scale: 1, left: 0 };
+		}
+		const s = Math.max(screenW / size.w, screenH / size.h) * 1.3;
+		return {
+			scale: s,
+			left: screenW / 2 - (size.w * s) / 2,
+		};
+	}, [screenW, screenH, size.w, size.h]);
 
-	const scale = Math.max(SCREEN_W / size.w, SCREEN_H / size.h) * 1.3;
+	if (!info || level === 0 || !SvgComponent) return null;
 
 	return (
 		<View
@@ -56,7 +66,7 @@ export function BackgroundLayer({ level }: { level: BackgroundLevel }) {
 				style={{
 					position: "absolute",
 					bottom: -20,
-					left: SCREEN_W / 2 - (size.w * scale) / 2,
+					left,
 					opacity: 0.5,
 				}}
 			>

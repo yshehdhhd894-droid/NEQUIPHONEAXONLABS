@@ -1,18 +1,15 @@
-import { memo, useMemo } from "react";
-import { Image, ScrollView, View } from "react-native";
+import { memo } from "react";
+import { ScrollView } from "react-native";
+import MiniBanner from "@/components/mini-banner/mini-banner";
 import { useHomeLayoutMetrics } from "@/hooks/useHomeLayoutMetrics";
+import { HOME_MINI_BANNERS } from "@/libs/mini-banner-config";
 
-const HOME_BANNER_CARDS = [
-	require("@/assets/cards_home/trimmed/card1.png"),
-	require("@/assets/cards_home/trimmed/card2.png"),
-	require("@/assets/cards_home/trimmed/card3.png"),
-] as const;
+const BANNER_ASPECT = 140 / 390;
 
-/** Carrusel horizontal de tarjetillas del home (PNG, sin SVG/React). */
+/** Carrusel de tarjetillas — ancho 100% del área útil, escala en cada pantalla. */
 function HomeMiniBannerCarousel() {
 	const m = useHomeLayoutMetrics();
 	const cardWidth = m.width - m.sectionPaddingH * 2;
-	const cardHeight = useMemo(() => Math.round(cardWidth * 0.34), [cardWidth]);
 
 	return (
 		<ScrollView
@@ -30,25 +27,22 @@ function HomeMiniBannerCarousel() {
 			}}
 			className="mt-1 mb-0"
 		>
-			{HOME_BANNER_CARDS.map((source, index) => (
-				<View
-					key={`home-banner-${index}`}
-					style={{
-						width: cardWidth,
-						height: cardHeight,
-						borderRadius: m.miniBannerRadius,
-					}}
-					className="overflow-hidden bg-guanabana"
-				>
-					<Image
-						source={source}
-						style={{ width: cardWidth, height: cardHeight }}
-						resizeMode="cover"
-					/>
-				</View>
+			{HOME_MINI_BANNERS.map((banner) => (
+				<MiniBanner
+					key={banner.id}
+					title={banner.title}
+					description={banner.description}
+					linkText={banner.linkText}
+					image={banner.image}
+					bannerColor={banner.bannerColor}
+					typeBanner={banner.typeBanner}
+					width={cardWidth}
+				/>
 			))}
 		</ScrollView>
 	);
 }
 
 export default memo(HomeMiniBannerCarousel);
+
+export { BANNER_ASPECT };

@@ -1,14 +1,16 @@
 import { useCallback } from "react";
-import { Platform, useWindowDimensions } from "react-native";
+import {
+	MAX_PHONE_WIDTH,
+	useAppLayoutDimensions,
+} from "@/libs/app-layout-dimensions";
+
+export { MAX_PHONE_WIDTH };
 
 /** Ancho de referencia (iPhone 14 / mayoría de Android estándar). */
 const BASE_WIDTH = 390;
 
 /** Alto de referencia para espaciado vertical. */
 const BASE_HEIGHT = 844;
-
-/** Teléfonos grandes (Pro Max) sin techo artificial. */
-const MAX_PHONE_WIDTH = 480;
 
 /** Límites de escala para pantallas muy pequeñas o muy grandes. */
 const MIN_WIDTH_SCALE = 0.76;
@@ -20,11 +22,9 @@ const MAX_HEIGHT_SCALE = 1.08;
 export const MAX_FONT_SCALE_MULTIPLIER = 1.15;
 
 export function useLayoutScale() {
-	const { width, height, fontScale } = useWindowDimensions();
+	const { width, height, fontScale } = useAppLayoutDimensions();
 
-	/** Escala fluida en móviles; en pantallas anchas no inflar más allá de un teléfono grande. */
-	const layoutWidth =
-		Platform.OS === "web" ? Math.min(width, MAX_PHONE_WIDTH) : width;
+	const layoutWidth = width;
 	const layoutHeight = height;
 
 	const widthScale = Math.min(

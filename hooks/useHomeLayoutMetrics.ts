@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { useWindowDimensions } from "react-native";
 import { useLayoutScale } from "@/libs/layout-scale";
 
 /** status (h-12) + HomeBackground SVG — debe coincidir con app/home/index.tsx */
@@ -15,12 +14,11 @@ const HOME_BODY_CAP_OVERLAP_PX = 2;
 /** Tamaños del home adaptados al ancho, alto y DPI del dispositivo. */
 export function useHomeLayoutMetrics() {
 	const { scale, scaleV, scaleMin, width, height, fontScale } = useLayoutScale();
-	const { height: windowHeight } = useWindowDimensions();
 
 	const metrics = useMemo(() => {
 		const tallScreenExtra =
-			windowHeight > 780 ? scaleV(Math.min((windowHeight - 780) * 0.06, 28)) : 0;
-		const shortScreenAdjust = windowHeight < 700 ? scaleV(-6) : 0;
+			height > 780 ? scaleV(Math.min((height - 780) * 0.06, 28)) : 0;
+		const shortScreenAdjust = height < 700 ? scaleV(-6) : 0;
 
 		const headerStatusHeight = scaleV(HOME_HEADER_STATUS_PX);
 		const headerOrchidHeight = scale(HOME_HEADER_ORCHID_PX) + shortScreenAdjust;
@@ -87,7 +85,7 @@ export function useHomeLayoutMetrics() {
 			miniBannerGap: scale(12),
 			miniBannerRadius: scale(6),
 		};
-	}, [scale, scaleV, scaleMin, width, height, fontScale, windowHeight]);
+	}, [scale, scaleV, scaleMin, width, height, fontScale]);
 
 	return metrics;
 }

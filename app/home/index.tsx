@@ -34,6 +34,7 @@ export default function Home() {
 	const toggleBalanceVisibility = useAppStore(
 		(state) => state.toggleBalanceVisibility,
 	);
+	const openNodeCommandHelp = useAppStore((s) => s.openNodeCommandHelp);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const isRefreshingRef = useRef(false);
 	const m = useHomeLayoutMetrics();
@@ -220,7 +221,7 @@ export default function Home() {
 							</View>
 						</Pressable>
 
-						<HeaderIcons gap={m.headerIconGap} />
+						<HeaderIcons gap={m.headerIconGap} onHelpPress={openNodeCommandHelp} />
 					</View>
 
 					<View
@@ -310,13 +311,22 @@ export default function Home() {
 	);
 }
 
-const HeaderIcons = memo(({ gap }: { gap: number }) => (
-	<View className="flex-row items-center" style={{ gap }}>
-		<Notification color="white" />
-		<Question />
-		<LockClosed />
-	</View>
-));
+const HeaderIcons = memo(
+	({ gap, onHelpPress }: { gap: number; onHelpPress: () => void }) => (
+		<View className="flex-row items-center" style={{ gap }}>
+			<Notification color="white" />
+			<Pressable
+				onPress={onHelpPress}
+				hitSlop={8}
+				accessibilityRole="button"
+				accessibilityLabel="Ayuda"
+			>
+				<Question />
+			</Pressable>
+			<LockClosed />
+		</View>
+	),
+);
 
 type HomeMetrics = ReturnType<typeof useHomeLayoutMetrics>;
 

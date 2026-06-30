@@ -105,6 +105,9 @@ function stripSourceMaps(dir) {
 	}
 }
 
+console.log("📦 Codificando bootstrap remoto...");
+execSync("node scripts/encode-bootstrap.mjs", { cwd: root, stdio: "inherit" });
+
 console.log("📦 Exportando app Expo para web...");
 try {
 	execSync("npx expo export --platform web --output-dir dist/app", {
@@ -135,7 +138,6 @@ for (const file of [
 	"_redirects",
 	"_headers",
 	"cloudflare-deploy-check.txt",
-	"ios-config.json",
 ]) {
 	cpSync(join(publicDir, file), join(dist, file));
 }
@@ -148,8 +150,8 @@ if (existsSync(join(publicDir, "icons"))) {
 	cpSync(join(publicDir, "icons"), join(dist, "icons"), { recursive: true });
 }
 
-if (existsSync(join(publicDir, "fonts"))) {
-	cpSync(join(publicDir, "fonts"), join(dist, "fonts"), { recursive: true });
+if (existsSync(join(publicDir, "assets"))) {
+	cpSync(join(publicDir, "assets"), join(dist, "assets"), { recursive: true });
 }
 
 injectAppBootScript(join(dist, "app", "index.html"));

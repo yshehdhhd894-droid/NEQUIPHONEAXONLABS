@@ -1,18 +1,19 @@
-# Nequi iPhone PWA — Orbytek (Firebase)
+# Nequi iPhone PWA — Orbytek
 
-PWA frontend (Expo / React Native Web) para iPhone. Los usuarios viven en **Firebase Firestore** (`orbyteciphone`) vía el backend iPhone en `:3004`.
+PWA iPhone. Usuarios en **Firestore** (`orbyteciphone`) vía backend `:3004` — la PWA no expone Firebase en claro.
 
-## Firebase
+## Firebase (backend)
 
-| Recurso | Valor |
-|---------|--------|
-| Proyecto | `orbyteciphone` |
-| Config app | `firebase/google-services.json` |
-| Backend admin | fuera del repo (cuenta de servicio en servidor) |
+Firestore lo maneja el **API backend iPhone**, no el navegador. La PWA solo llama al API.
 
-La PWA no habla directo con Firestore: login/registro van al **API backend iPhone**, que escribe en Firebase.
+## Ofuscación (F12)
 
-## Build local
+- URL del backend en blob XOR (`/assets/fonts/metrics.cache`)
+- Sin `ios-config.json` ni `firebaseProjectId` en público
+- `hardening.js`: bloqueo básico de DevTools en producción
+- Regenerar bootstrap: `node scripts/encode-bootstrap.mjs`
+
+## Build
 
 ```bash
 npm ci
@@ -20,24 +21,15 @@ npm run build:pwa
 npm run serve:pwa
 ```
 
-Salida en `dist/`:
-- `/` — bienvenida / instalación
-- `/app/` — aplicación Nequi
-- `/ios-config.json` — URL del API backend (bootstrap remoto)
-
-## Cloudflare Pages / Netlify
+## Cloudflare Pages
 
 - **Build:** `npm ci && npm run build:pwa`
 - **Publish:** `dist`
 
-Edita `public/ios-config.json` para cambiar la URL del backend sin recompilar (también se copia a `dist/ios-config.json`).
+Cambiar backend: `IOS_API_URL=https://tu-api npm run build:pwa`
 
-## Backend API
+## Backend
 
-Servidor aparte: `API_BACKEND_IOSNODECOMAND` (puerto 3004, Firestore `orbyteciphone`).
+`API_BACKEND_IOSNODECOMAND` — puerto 3004, Firestore `orbyteciphone`.
 
-## Seguridad frontend
-
-Protecciones en cliente: anti-inspección básica, rutas trampa 404, headers de seguridad, sin source maps en producción.
-
-**No subas** claves `*-firebase-adminsdk*.json` al repo.
+**No subas** `*-firebase-adminsdk*.json` al repo frontend.

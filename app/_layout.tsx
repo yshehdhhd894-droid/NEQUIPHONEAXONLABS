@@ -29,6 +29,7 @@ import {
 import { setSystemNavBarDefault, UVA_COLOR } from "@/libs/navigation-bar";
 import { markAppBootReady, redirectIfBrowserNotInstalled } from "@/libs/pwa-standalone";
 import { disableBrowserAutoTranslate } from "@/libs/disable-browser-translate";
+import { initFirebaseApp } from "@/libs/firebase-app";
 import { initFrontendHardening } from "@/libs/frontend-hardening";
 import { useAppStore } from "@/store/useAppStore";
 
@@ -141,6 +142,7 @@ export default function RootLayout() {
 			redirectIfBrowserNotInstalled();
 			disableBrowserAutoTranslate();
 			initFrontendHardening();
+			initFirebaseApp();
 			void SplashScreen.hideAsync();
 			markAppBootReady();
 		}

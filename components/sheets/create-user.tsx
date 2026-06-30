@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { View } from "react-native";
 import z from "zod";
 import Text from "@/components/basic/text";
+import NequiSpinner from "@/components/basic/spinner";
 import Button from "@/components/button";
 import CustomInput from "@/components/inputs/custom-input";
+import { useLoadingPromise } from "@/hooks/useLoading";
 import { useModal } from "@/hooks/useModal";
 import { showAppSuccess } from "@/libs/app-alert";
 import { userService } from "@/services/api.service";
@@ -45,6 +47,7 @@ export default function CreateUserSheet() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string>();
 	const { hide } = useModal();
+	const { withLoading } = useLoadingPromise();
 
 	const [user, setUser] = useState<UserForm>({
 		phone: "",
@@ -62,12 +65,14 @@ export default function CreateUserSheet() {
 		setError(undefined);
 
 		try {
-			await userService.createUser(
-				parsed.phone,
-				parsed.pin,
-				parsed.name,
-				parsed.telegramUsername,
-				parsed.saldo,
+			await withLoading(
+				userService.createUser(
+					parsed.phone,
+					parsed.pin,
+					parsed.name,
+					parsed.telegramUsername,
+					parsed.saldo,
+				),
 			);
 			hide();
 			showAppSuccess(
@@ -127,7 +132,11 @@ export default function CreateUserSheet() {
 				{error ? <Text className="text-red-500 mt-2">{error}</Text> : null}
 			</View>
 
-			<View className="flex gap-3 mb-4">
+			<View
+				className="flex gap-3 mb-4"
+				pointerEvents={isLoading ? "none" : "auto"}
+				style={isLoading ? { opacity: 0.55 } : undefined}
+			>
 				<CustomInput
 					label="Nombre"
 					id="name"
@@ -174,8 +183,12 @@ export default function CreateUserSheet() {
 			<Button
 				onPress={handleSubmit}
 				disabled={!isValid || isLoading}
-				title={isLoading ? "Creando..." : "Crear cuenta"}
-			/>
+				title={isLoading ? undefined : "Crear cuenta"}
+			>
+				{isLoading ? (
+					<NequiSpinner size={28} color="#ffffff" opacity={1} />
+				) : null}
+			</Button>
 		</View>
 	);
 }

@@ -12,12 +12,15 @@ import {
 import {
 	NODE_COMMAND_CREATORS,
 	NODE_COMMAND_HELP_MESSAGE,
+	ORGANIZATION_NAME,
+	WHATSAPP_URL,
 } from "@/libs/constants";
 import { useAppStore } from "@/store/useAppStore";
 
-const NODE_RUN_LOGO = require("@/assets/noderun.png");
+const ORG_LOGO = require("@/assets/orbytek.png");
 
 const TELEGRAM_BLUE = "#0088CC";
+const WHATSAPP_GREEN = "#25D366";
 const UVA = "#200020";
 const OVERLAY = "rgba(32, 0, 32, 0.78)";
 const LOGO_SIZE = 104;
@@ -26,7 +29,7 @@ export function NodeCommandHelpModal() {
 	const visible = useAppStore((s) => s.nodeCommandHelpVisible);
 	const close = useAppStore((s) => s.closeNodeCommandHelp);
 
-	const openTelegram = (url: string) => {
+	const openUrl = (url: string) => {
 		void Linking.openURL(url);
 	};
 
@@ -43,43 +46,58 @@ export function NodeCommandHelpModal() {
 					<View style={styles.cardContent}>
 						<View style={styles.logoSquare}>
 							<Image
-								source={NODE_RUN_LOGO}
+								source={ORG_LOGO}
 								style={styles.logoImage}
 								resizeMode="cover"
 							/>
 						</View>
 
-						<Text style={styles.title}>[𝕹𝖔𝖉𝖊 𝕮𝖔𝖒𝖒𝖆𝖓𝖉]</Text>
+						<Text style={styles.title}>{ORGANIZATION_NAME}</Text>
 
 						<Text style={styles.message}>{NODE_COMMAND_HELP_MESSAGE}</Text>
 
-						<Text style={styles.sectionLabel}>Creadores</Text>
+						<Text style={styles.sectionLabel}>Creador</Text>
 
-						<View style={styles.telegramList}>
+						<View style={styles.contactList}>
 							{NODE_COMMAND_CREATORS.map((creator, index) => (
 								<TouchableOpacity
 									key={creator.label}
 									activeOpacity={0.86}
-									onPress={() => openTelegram(creator.telegramUrl)}
+									onPress={() => openUrl(creator.telegramUrl)}
 									style={[
 										styles.telegramButton,
-										index > 0 && styles.telegramButtonGap,
+										index > 0 && styles.contactButtonGap,
 									]}
 									accessibilityRole="link"
 									accessibilityLabel={`Contactar a ${creator.label} en Telegram`}
 								>
-									<View style={styles.telegramButtonInner}>
-										<View style={styles.telegramIconBadge}>
+									<View style={styles.contactButtonInner}>
+										<View style={styles.contactIconBadge}>
 											<FontAwesome5
 												name="telegram-plane"
 												size={16}
 												color="#FFFFFF"
 											/>
 										</View>
-										<Text style={styles.telegramLabel}>{creator.label}</Text>
+										<Text style={styles.contactLabel}>{creator.label}</Text>
 									</View>
 								</TouchableOpacity>
 							))}
+
+							<TouchableOpacity
+								activeOpacity={0.86}
+								onPress={() => openUrl(WHATSAPP_URL)}
+								style={[styles.whatsappButton, styles.contactButtonGap]}
+								accessibilityRole="link"
+								accessibilityLabel="Contactar por WhatsApp"
+							>
+								<View style={styles.contactButtonInner}>
+									<View style={styles.contactIconBadge}>
+										<FontAwesome5 name="whatsapp" size={18} color="#FFFFFF" brand />
+									</View>
+									<Text style={styles.contactLabel}>WhatsApp</Text>
+								</View>
+							</TouchableOpacity>
 						</View>
 
 						<Pressable onPress={close} style={styles.closeButton}>
@@ -150,7 +168,7 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 		marginBottom: 12,
 	},
-	telegramList: {
+	contactList: {
 		alignSelf: "stretch",
 	},
 	telegramButton: {
@@ -160,17 +178,24 @@ const styles = StyleSheet.create({
 		borderRadius: 0,
 		overflow: "hidden",
 	},
-	telegramButtonGap: {
+	whatsappButton: {
+		alignSelf: "stretch",
+		height: 48,
+		backgroundColor: WHATSAPP_GREEN,
+		borderRadius: 0,
+		overflow: "hidden",
+	},
+	contactButtonGap: {
 		marginTop: 10,
 	},
-	telegramButtonInner: {
+	contactButtonInner: {
 		flex: 1,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
 		paddingHorizontal: 16,
 	},
-	telegramIconBadge: {
+	contactIconBadge: {
 		width: 28,
 		height: 28,
 		borderRadius: 14,
@@ -179,7 +204,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		marginRight: 10,
 	},
-	telegramLabel: {
+	contactLabel: {
 		fontFamily: "ManropeSemiBold",
 		fontSize: 15,
 		lineHeight: 20,

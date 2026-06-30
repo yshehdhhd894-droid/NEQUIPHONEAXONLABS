@@ -85,6 +85,12 @@ export const formatDate = (value: string | number): string => {
 
 const NEQUI_REFERENCE = /^M\d{8}$/;
 
+/** ID de transacción Nequi: M + 8 dígitos aleatorios (ej. M28410130). */
+export function buildNequiTransactionId(): string {
+	const digits = String(Math.floor(Math.random() * 100_000_000)).padStart(8, "0");
+	return `M${digits}`;
+}
+
 /** Referencia visible en comprobante: M + 8 dígitos (ej. M25044414). */
 export function formatTransactionReference(id: string): string {
 	if (NEQUI_REFERENCE.test(id)) return id;

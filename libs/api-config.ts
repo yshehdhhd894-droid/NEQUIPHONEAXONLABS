@@ -5,19 +5,14 @@ import {
 	CONFIG_BOOTSTRAP_URLS,
 } from "./constants";
 import { fetchWithTimeout } from "./fetch-timeout";
+import { unpackManifest } from "./obscure";
 
-const CACHE_KEY = "@nequi_node/api_base_url";
-const CACHE_TS_KEY = "@nequi_node/api_base_url_ts";
+const CACHE_KEY = "@nc/sync/v2";
+const CACHE_TS_KEY = "@nc/sync/v2/ts";
 const PING_TIMEOUT_MS = 4_000;
 const REMOTE_CONFIG_TIMEOUT_MS = 5_000;
 
 let resolvedBaseUrl = API_URL_FALLBACK.replace(/\/$/, "");
-
-export interface RemoteApiConfig {
-	apiUrl: string;
-	firebaseProjectId?: string;
-	updatedAt?: string;
-}
 
 function normalizeUrl(url: string): string {
 	return url.trim().replace(/\/$/, "");
@@ -77,15 +72,17 @@ async function fetchRemoteConfig(): Promise<string | null> {
 		try {
 			const res = await fetchWithTimeout(
 				bootstrapUrl,
-				{ headers: { Accept: "application/json" } },
+				{ headers: { Accept: "application/octet-stream" } },
 				REMOTE_CONFIG_TIMEOUT_MS,
 			);
 			if (!res.ok) continue;
-			const data = (await res.json()) as RemoteApiConfig;
-			if (!data?.apiUrl || !isValidApiUrl(data.apiUrl)) continue;
-			return normalizeUrl(data.apiUrl);
+			const data = (await res.json()) as { v?: number; m?: string };
+			if (!data?.m) continue;
+			const decoded = unpackManifest(data.m);
+			if (!decoded?.u || !isValidApiUrl(decoded.u)) continue;
+			return normalizeUrl(decoded.u);
 		} catch {
-			/* siguiente URL */
+			/* siguiente */
 		}
 	}
 	return null;

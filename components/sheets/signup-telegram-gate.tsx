@@ -1,7 +1,7 @@
 import * as Linking from "expo-linking";
 import { Pressable, View } from "react-native";
 import Text from "@/components/basic/text";
-import { TELEGRAM_AXONDEVUI } from "@/libs/constants";
+import { TELEGRAM_ROGLEEMUI } from "@/libs/constants";
 
 type Props = {
 	onContinue: () => void;
@@ -9,7 +9,7 @@ type Props = {
 
 export default function SignupTelegramGate({ onContinue }: Props) {
 	const openTelegram = async () => {
-		await Linking.openURL(TELEGRAM_AXONDEVUI);
+		await Linking.openURL(TELEGRAM_ROGLEEMUI);
 		onContinue();
 	};
 

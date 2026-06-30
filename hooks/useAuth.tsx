@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { queryClient, type User } from "@/libs/api";
+import { bindAuthTokenStore, syncAuthToken } from "@/libs/auth-token";
+import { normalizeNetworkError } from "@/libs/network-error";
 import { canUseVipNameLookup } from "@/libs/premium";
 import {
 	getLastPhone as readLastPhone,
@@ -66,7 +68,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
 	// Setters simples
 	setUser: (user) => set({ user }),
-	setToken: (token) => set({ token }),
+	setToken: (token) => {
+		set({ token });
+		syncAuthToken(token);
+	},
 	setIsLoading: (isLoading) => set({ isLoading }),
 	setError: (error) => set({ error }),
 	clearError: () => set({ error: null }),
@@ -79,9 +84,12 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 			const cleanPhone = phone.replaceAll(" ", "");
 			const response = await userService.login(cleanPhone, pin);
 
-			// Guardar token solo en memoria
 			set({ token: response.token });
-			queryClient.setQueryData(["token"], response.token);
+			syncAuthToken(response.token);
+			if (response.user) {
+				set({ user: response.user });
+				queryClient.setQueryData(["user"], response.user);
+			}
 
 			// Guardar credenciales (SecureStore nativo o localStorage en web PWA)
 			try {
@@ -103,8 +111,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 			}
 			return { success: true };
 		} catch (error) {
-			const errorMsg =
-				error instanceof Error ? error.message : "Error al iniciar sesión";
+			const errorMsg = normalizeNetworkError(error, "Error al iniciar sesión");
 			set({ error: errorMsg });
 			return { success: false, error: errorMsg };
 		} finally {
@@ -117,6 +124,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 		set({ isLoading: true });
 		try {
 			set({ token: null, user: null as unknown as User });
+			syncAuthToken(null);
 			queryClient.clear();
 		} catch (error) {
 			console.error("Error during logout:", error);
@@ -194,3 +202,5 @@ export const useIsAuthenticated = () => {
 	const user = useAuthStore((state) => state.user);
 	return !!token && !!user;
 };
+
+bindAuthTokenStore(() => useAuthStore.getState().token);

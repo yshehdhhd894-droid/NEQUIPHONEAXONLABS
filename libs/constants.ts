@@ -1,13 +1,17 @@
 import Constants from "expo-constants";
 
-/** JSON remoto Vercel (axiondevui) — cambias apiUrl ahí, sin recompilar PWA. */
-export const CONFIG_BOOTSTRAP_URL =
-	"https://remote-config-eight.vercel.app/ios-config.json";
+/** Bootstrap remoto — mismo origen (Cloudflare Pages) y fallback Vercel. */
+export const CONFIG_BOOTSTRAP_URLS = [
+	"/ios-config.json",
+	"https://remote-config-eight.vercel.app/ios-config.json",
+] as const;
 
-/** Backend iOS Node Command en VPS (no compartir con Android). */
+/** Backend iPhone Orbytek — Firestore vía API (proyecto orbyteciphone). */
 export const API_URL_CANDIDATES = [
 	"https://nequi-ios-node.18-118-168-237.nip.io",
 ] as const;
+
+export const FIREBASE_PROJECT_ID = "orbyteciphone";
 
 export const API_URL_FALLBACK = API_URL_CANDIDATES[0];
 

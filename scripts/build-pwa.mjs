@@ -135,6 +135,7 @@ for (const file of [
 	"_redirects",
 	"_headers",
 	"cloudflare-deploy-check.txt",
+	"ios-config.json",
 ]) {
 	cpSync(join(publicDir, file), join(dist, file));
 }

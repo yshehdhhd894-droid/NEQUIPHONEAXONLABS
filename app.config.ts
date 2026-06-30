@@ -69,5 +69,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 		eas: {
 			projectId: "bbd4c644-3107-4c85-b155-796e88c131a9",
 		},
+		firebaseProjectId: "orbyteciphone",
 	},
 });

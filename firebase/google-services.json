@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "891550953201",
+    "project_id": "orbyteciphone",
+    "storage_bucket": "orbyteciphone.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:891550953201:android:e29a95dfbf00052838c350",
+        "android_client_info": {
+          "package_name": "ui.iphoneorbytec.os"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBY1ST0bYCJFc5ZGsb1q1y1MkyGjsh-QUo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

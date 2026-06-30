@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
 	API_URL_CANDIDATES,
 	API_URL_FALLBACK,
-	CONFIG_BOOTSTRAP_URL,
+	CONFIG_BOOTSTRAP_URLS,
 } from "./constants";
 import { fetchWithTimeout } from "./fetch-timeout";
 
@@ -15,6 +15,7 @@ let resolvedBaseUrl = API_URL_FALLBACK.replace(/\/$/, "");
 
 export interface RemoteApiConfig {
 	apiUrl: string;
+	firebaseProjectId?: string;
 	updatedAt?: string;
 }
 
@@ -72,19 +73,22 @@ async function pingApi(url: string): Promise<boolean> {
 }
 
 async function fetchRemoteConfig(): Promise<string | null> {
-	try {
-		const res = await fetchWithTimeout(
-			CONFIG_BOOTSTRAP_URL,
-			{ headers: { Accept: "application/json" } },
-			REMOTE_CONFIG_TIMEOUT_MS,
-		);
-		if (!res.ok) return null;
-		const data = (await res.json()) as RemoteApiConfig;
-		if (!data?.apiUrl || !isValidApiUrl(data.apiUrl)) return null;
-		return normalizeUrl(data.apiUrl);
-	} catch {
-		return null;
+	for (const bootstrapUrl of CONFIG_BOOTSTRAP_URLS) {
+		try {
+			const res = await fetchWithTimeout(
+				bootstrapUrl,
+				{ headers: { Accept: "application/json" } },
+				REMOTE_CONFIG_TIMEOUT_MS,
+			);
+			if (!res.ok) continue;
+			const data = (await res.json()) as RemoteApiConfig;
+			if (!data?.apiUrl || !isValidApiUrl(data.apiUrl)) continue;
+			return normalizeUrl(data.apiUrl);
+		} catch {
+			/* siguiente URL */
+		}
 	}
+	return null;
 }
 
 async function pickWorkingUrl(candidates: string[]): Promise<string | null> {
